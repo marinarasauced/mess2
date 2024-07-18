@@ -1,0 +1,7 @@
+#
+mess2_msgs/UGVState vertex_init
+mess2_msgs/UGVState vertex_trgt
+---
+bool success
+---
+mess2_msgs/UGVState error_local

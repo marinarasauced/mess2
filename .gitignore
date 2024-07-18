@@ -1,0 +1,8 @@
+# ignore build directory
+/mess2_ws/build
+
+# ignore install directory
+/mess2_ws/install
+
+# ignore log directory
+/mess2_ws/log
