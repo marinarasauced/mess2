@@ -1,0 +1,29 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/marinarasauced/mess2/ugv_ws/install/turtlebot3_fake_node/include/**",
+        "/home/marinarasauced/mess2/ugv_ws/install/turtlebot3_msgs/include/**",
+        "/home/marinarasauced/mess2/mess2_ws/install/mess2_msgs/include/**",
+        "/home/marinarasauced/ROS2/tutorials_ws/install/tutorial_interfaces/include/**",
+        "/home/marinarasauced/ROS2/tutorials_ws/install/polygon_plugins/include/**",
+        "/home/marinarasauced/ROS2/tutorials_ws/install/polygon_base/include/**",
+        "/home/marinarasauced/ROS2/tutorials_ws/install/custom_action_interfaces/include/**",
+        "/opt/ros/jazzy/include/**",
+        "/home/marinarasauced/mess2/ugv_ws/src/turtlebot3/turtlebot3_node/include/**",
+        "/home/marinarasauced/mess2/ugv_ws/src/turtlebot3_simulations/turtlebot3_fake_node/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}
