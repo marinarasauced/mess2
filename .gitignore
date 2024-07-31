@@ -1,18 +1,14 @@
-# ignore build directory
-/mess2_ws/build
-/uav_ws/build
-/ugv_ws/build
-/vicon_ws/build
+
+# ignore mess2_ws
+mess2_ws/build/
+mess2_ws/install/
+mess2_ws/log/
+mess2_ws/src/.vscode/
 
 
-# ignore install directory
-/mess2_ws/install
-/uav_ws/install
-/ugv_ws/install
-/vicon_ws/install
 
-# ignore log directory
-/mess2_ws/log
-/uav_ws/log
-/ugv_ws/log
-/vicon_ws/log
+
+
+
+# ignore vscode
+.vscode/

@@ -3,7 +3,7 @@
 <package format="3">
   <name>mess2_msgs</name>
   <version>0.0.0</version>
-  <description>ROS2 Jazzy custom messages, services, and actions for mess2 CPSC research.</description>
+  <description>ROS2 Jazzy custom messages, services, and actions for mess2 CSCP research.</description>
   <maintainer email="marinarasauced@outlook.com">marinarasauced</maintainer>
   <license>Apache 2.0</license>
 

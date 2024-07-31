@@ -1,7 +1,39 @@
-#
+# SetUGVState.action
+
+# goal definition
+# this section defines the input parameters required to complete the action.
+
+# vehicle identification
+string name
+string model
+
+# control parameters
+float64 k1
+float64 k2
+float64 speed
+
+# error tolerance
+mess2_msgs/UGVState error_tol
+
+# initial and target vertices
 mess2_msgs/UGVState vertex_init
 mess2_msgs/UGVState vertex_trgt
+
+# difference quaternion
+geometry_msgs/Quaternion quat_diff
+
 ---
+
+# result definition
+# this section defines the output parameters after executing the goal.
+
+# success of the action
 bool success
+
 ---
+
+# feedback definition
+# this section provides feedback during the execution of the goal.
+
+# current local error
 mess2_msgs/UGVState error_local
