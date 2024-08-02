@@ -5,7 +5,7 @@
 
 # threat field and edges
 float64[] threat
-int32[][] edges
+EdgeArray edges
 
 # initial and target vertices
 int32 vertex_init
@@ -16,8 +16,5 @@ int32 vertex_trgt
 # response definition
 # this section defines the output parameters that the service will return.
 
-# optimal path
-int32[] path
-
-# cummulative metric of optimal path
-float64 metric
+# path and threat metric
+AlgorithmOutput result
