@@ -21,7 +21,7 @@
 #include "mess2_msgs/action/ugv_follow_line.hpp"
 
 // namspaces
-namespace set_ugv_state_action
+namespace ugv_actions
 {
 // ros2 node class
 class UGVFollowLineActionClient : public rclcpp::Node
@@ -36,12 +36,12 @@ public:
 
     // constructor
     explicit UGVFollowLineActionClient(const rclcpp::NodeOptions & options = rclcpp::NodeOptions())
-    : Node("set_ugv_state_action_client", options)
+    : Node("ugv_line_following_client", options)
     {
         //
         this->client_ptr_ = rclcpp_action::create_client<UGVFollowLine>(
             this,
-            "set_ugv_state"
+            "ugv_follow_line"
         );
 
         auto timer_callback_lambda = [this](){ return this->send_goal(); };
@@ -152,6 +152,6 @@ private:
     rclcpp::TimerBase::SharedPtr timer_;
 
 }; // class UGVFollowLineActionClient
-} // namespace set_ugv_state_action
+} // namespace ugv_actions
 
-RCLCPP_COMPONENTS_REGISTER_NODE(set_ugv_state_action::UGVFollowLineActionClient)
+RCLCPP_COMPONENTS_REGISTER_NODE(ugv_actions::UGVFollowLineActionClient)

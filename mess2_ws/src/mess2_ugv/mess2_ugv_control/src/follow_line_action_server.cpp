@@ -27,7 +27,7 @@
 #include "mess2_plugins/quaternions.hpp"
 
 using namespace mess2_plugins;
-namespace set_ugv_state_action
+namespace ugv_actions
 {
 // ros2 node class
 class UGVFollowLineActionServer : public rclcpp::Node
@@ -45,7 +45,7 @@ public:
 
     // constructor
     explicit UGVFollowLineActionServer(const rclcpp::NodeOptions & options = rclcpp::NodeOptions())
-    : Node("set_ugv_state_action_server", options)
+    : Node("ugv_line_following_server", options)
     {
         // namespaces
         using namespace std::placeholders;
@@ -80,7 +80,7 @@ public:
         // create action server
         this->action_server_ = rclcpp_action::create_server<UGVFollowLine>(
             this,
-            "set_ugv_state",
+            "ugv_follow_line",
             handle_goal,
             handle_cancel,
             handle_accepted);
@@ -88,7 +88,6 @@ public:
         // publishers and subscribers
         pub_cmd_vel_ = this->create_publisher<geometry_msgs::msg::Twist>("cmd_vel", 10);
         sub_vicon_ = this->create_subscription<geometry_msgs::msg::TransformStamped>("vicon", 10, std::bind(&UGVFollowLineActionServer::callback_vicon, this, std::placeholders::_1));
-
     }
 
 private:
@@ -292,6 +291,6 @@ private:
     }
 
 }; // class UGVFollowLineActionServer
-} // namespace set_ugv_state_action
+} // namespace ugv_actions
 
-RCLCPP_COMPONENTS_REGISTER_NODE(set_ugv_state_action::UGVFollowLineActionServer)
+RCLCPP_COMPONENTS_REGISTER_NODE(ugv_actions::UGVFollowLineActionServer)

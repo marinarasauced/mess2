@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>mess2_ugv</name>
+  <name>mess2_ugv_control</name>
   <version>0.0.0</version>
-  <description>ROS2 Jazzy custom ugv nodes, services, actions for mess2 CSCP research.</description>
+  <description>ROS2 Jazzy custom ugv control nodes, services, actions for mess2 CSCP research.</description>
   <maintainer email="marinarasauced@outlook.com">marinarasauced</maintainer>
   <license>Apache 2.0</license>
 

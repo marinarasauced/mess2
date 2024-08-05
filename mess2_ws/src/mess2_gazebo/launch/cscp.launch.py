@@ -176,18 +176,18 @@ def generate_launch_description():
         ]
     )
 
-    burger1_set_state_action_server_node = Node(
-        package='mess2_ugv',
-        executable='set_ugv_state_action_server',
-        name='set_ugv_state_action_server',
+    burger1_follow_line_action_server = Node(
+        package='mess2_ugv_control',
+        executable='follow_line_action_server',
+        name='follow_line_action_server',
         output='screen',
         namespace='ugv/burger1'
     )
 
-    # burger1_set_state_action_client_node = Node(
+    # burger1_follow_line_action_client = Node(
     #     package='mess2_ugv',
-    #     executable='set_ugv_state_action_client',
-    #     name='set_ugv_state_action_client',
+    #     executable='follow_line_action_client',
+    #     name='follow_line_action_client',
     #     output='screen',
     #     namespace='ugv/burger1'
     # )
@@ -206,7 +206,7 @@ def generate_launch_description():
     ld.add_action(bridge_node)
     ld.add_action(burger1_republisher_node)
     ld.add_action(wafflepi1_republisher_node)
-    ld.add_action(burger1_set_state_action_server_node)
-    # ld.add_action(burger1_set_state_action_client_node)
+    ld.add_action(burger1_follow_line_action_server)
+    # ld.add_action(burger1_follow_line_action_client)
 
     return ld
