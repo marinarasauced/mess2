@@ -12,17 +12,21 @@ find_package(rosidl_default_generators REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
 
-  
+  # algorithms
   "msg/Edge.msg"
   "msg/EdgeArray.msg"
+  "msg/DijkstraOut.msg"
+  "srv/DijkstraAlgo.srv"
+
+  # plugins
   "msg/EulerAngles.msg"
-  "msg/OutputDijkstra.msg"
+  
+  # uav
   "msg/UAVState.msg"
+  
+  # ugv
   "msg/UGVState.msg"
-
-  "srv/Dijkstra.srv"
-
-  "action/SetUGVState.action"
+  "action/UGVFollowLine.action"
 
   DEPENDENCIES geometry_msgs std_msgs
 )

@@ -22,14 +22,15 @@
 // ros2 custom headers and plugins
 #include "mess2_msgs/msg/euler_angles.hpp"
 #include "mess2_msgs/msg/ugv_state.hpp"
-#include "mess2_msgs/action/set_ugv_state.hpp"
+#include "mess2_msgs/action/ugv_follow_line.hpp"
+#include "mess2_plugins/angles.hpp"
 #include "mess2_plugins/quaternions.hpp"
 
 using namespace mess2_plugins;
 namespace set_ugv_state_action
 {
 // ros2 node class
-class SetUGVStateActionServer : public rclcpp::Node
+class UGVFollowLineActionServer : public rclcpp::Node
 {
 public:
 
@@ -39,11 +40,11 @@ public:
     using Quaternion = geometry_msgs::msg::Quaternion;
     using EulerAngles = mess2_msgs::msg::EulerAngles;
     using UGVState = mess2_msgs::msg::UGVState;
-    using SetUGVState = mess2_msgs::action::SetUGVState;
-    using GoalHandleSetUGVState = rclcpp_action::ServerGoalHandle<SetUGVState>;
+    using UGVFollowLine = mess2_msgs::action::UGVFollowLine;
+    using GoalHandleUGVFollowLine = rclcpp_action::ServerGoalHandle<UGVFollowLine>;
 
     // constructor
-    explicit SetUGVStateActionServer(const rclcpp::NodeOptions & options = rclcpp::NodeOptions())
+    explicit UGVFollowLineActionServer(const rclcpp::NodeOptions & options = rclcpp::NodeOptions())
     : Node("set_ugv_state_action_server", options)
     {
         // namespaces
@@ -52,7 +53,7 @@ public:
         // handle goal requests
         auto handle_goal = [this](
             const rclcpp_action::GoalUUID & uuid,
-            std::shared_ptr<const SetUGVState::Goal> goal)
+            std::shared_ptr<const UGVFollowLine::Goal> goal)
         {
             RCLCPP_INFO(this->get_logger(), "received goal request");
             (void)uuid;
@@ -61,7 +62,7 @@ public:
 
         // handle requests to cancel goal
         auto handle_cancel = [this](
-            const std::shared_ptr<GoalHandleSetUGVState> goal_handel)
+            const std::shared_ptr<GoalHandleUGVFollowLine> goal_handel)
         {
             RCLCPP_INFO(this->get_logger(), "received request to cancel goal");
             (void)goal_handel;
@@ -70,14 +71,14 @@ public:
 
         // handle accepted goals
         auto handle_accepted = [this](
-            const std::shared_ptr<GoalHandleSetUGVState> goal_handle)
+            const std::shared_ptr<GoalHandleUGVFollowLine> goal_handle)
         {
             auto execute_in_thread = [this, goal_handle](){return this->execute_goal(goal_handle);};
             std::thread{execute_in_thread}.detach();
         };
 
         // create action server
-        this->action_server_ = rclcpp_action::create_server<SetUGVState>(
+        this->action_server_ = rclcpp_action::create_server<UGVFollowLine>(
             this,
             "set_ugv_state",
             handle_goal,
@@ -86,14 +87,14 @@ public:
 
         // publishers and subscribers
         pub_cmd_vel_ = this->create_publisher<geometry_msgs::msg::Twist>("cmd_vel", 10);
-        sub_vicon_ = this->create_subscription<geometry_msgs::msg::TransformStamped>("vicon", 10, std::bind(&SetUGVStateActionServer::callback_vicon, this, std::placeholders::_1));
+        sub_vicon_ = this->create_subscription<geometry_msgs::msg::TransformStamped>("vicon", 10, std::bind(&UGVFollowLineActionServer::callback_vicon, this, std::placeholders::_1));
 
     }
 
 private:
 
     //
-    rclcpp_action::Server<SetUGVState>::SharedPtr action_server_;
+    rclcpp_action::Server<UGVFollowLine>::SharedPtr action_server_;
     rclcpp::Publisher<Twist>::SharedPtr pub_cmd_vel_;
     rclcpp::Subscription<TransformStamped>::SharedPtr sub_vicon_;
 
@@ -180,7 +181,7 @@ private:
     }
 
     // execute action
-    void execute_goal(std::shared_ptr<GoalHandleSetUGVState> goal_handle) {
+    void execute_goal(std::shared_ptr<GoalHandleUGVFollowLine> goal_handle) {
 
         //
         RCLCPP_INFO(this->get_logger(), "executing goal");
@@ -188,8 +189,8 @@ private:
 
         // load goal, define feedback and result
         (void)load_goal(goal_handle);
-        auto result = std::make_shared<SetUGVState::Result>();
-        auto feedback = std::make_shared<SetUGVState::Feedback>();
+        auto result = std::make_shared<UGVFollowLine::Result>();
+        auto feedback = std::make_shared<UGVFollowLine::Feedback>();
 
         // set error to inf 
         error_local_.state.x = std::numeric_limits<float>::infinity();
@@ -255,7 +256,7 @@ private:
     }
 
     // load goal
-    void load_goal(std::shared_ptr<GoalHandleSetUGVState> goal_handle) {
+    void load_goal(std::shared_ptr<GoalHandleUGVFollowLine> goal_handle) {
 
         // get goal
         const auto goal = goal_handle->get_goal();
@@ -290,7 +291,7 @@ private:
         quat_diff_ = goal->quat_diff;
     }
 
-}; // class SetUGVStateActionServer
+}; // class UGVFollowLineActionServer
 } // namespace set_ugv_state_action
 
-RCLCPP_COMPONENTS_REGISTER_NODE(set_ugv_state_action::SetUGVStateActionServer)
+RCLCPP_COMPONENTS_REGISTER_NODE(set_ugv_state_action::UGVFollowLineActionServer)

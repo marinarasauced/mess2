@@ -16,8 +16,6 @@ geometry_msgs::msg::Quaternion convert_eul_to_quat(mess2_msgs::msg::EulerAngles 
 
 geometry_msgs::msg::Quaternion invert_quat(geometry_msgs::msg::Quaternion quat);
 
-double wrap_to_pi(double angle);
-
 geometry_msgs::msg::Quaternion multiply_two_quats(geometry_msgs::msg::Quaternion quat1, geometry_msgs::msg::Quaternion quat2);
 
 }  // namespace mess2_plugins

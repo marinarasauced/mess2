@@ -15,3 +15,6 @@ mess2_ws/src/.vscode/
 
 # ignore matlab
 mess2_matlab/
+
+# ignore experimental code
+mess2_ws/src/mess2_algorithms/src/dijkstra_ugv_line_following_server.cpp

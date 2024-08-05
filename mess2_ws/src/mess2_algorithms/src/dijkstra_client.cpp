@@ -23,14 +23,14 @@
 // ros2 custom headers and plugins
 #include "mess2_msgs/msg/edge.hpp"
 #include "mess2_msgs/msg/edge_array.hpp"
-#include "mess2_msgs/srv/dijkstra.hpp"
-#include "mess2_msgs/msg/output_dijkstra.hpp"
+#include "mess2_msgs/srv/dijkstra_algo.hpp"
+#include "mess2_msgs/msg/dijkstra_out.hpp"
 
 // type aliases
 using Edge = mess2_msgs::msg::Edge;
 using EdgeArray = mess2_msgs::msg::EdgeArray;
-using Dijkstra = mess2_msgs::srv::Dijkstra;
-using DijkstraOutput = mess2_msgs::msg::OutputDijkstra;
+using DijkstraAlgo = mess2_msgs::srv::DijkstraAlgo;
+using DijkstraOut = mess2_msgs::msg::DijkstraOut;
 
 // global parameters
 double scale = 1.1;
@@ -97,7 +97,7 @@ arma::mat get_threat(const arma::mat& x1, const arma::mat& x2)
 }
 
 // get edges
-EdgeArray get_edges_(const arma::mat threat)
+EdgeArray get_edges_(const arma::mat threat, const arma::mat& x1, const arma::mat& x2)
 {
     //
     std::vector<Edge> edges;
@@ -117,6 +117,10 @@ EdgeArray get_edges_(const arma::mat threat)
                 Edge edge;
                 edge.node1 = vertex_curr;
                 edge.node2 = vertex_adj;
+                edge.x1[0] = x1[vertex_curr];
+                edge.x1[1] = x1[vertex_adj];
+                edge.x2[0] = x2[vertex_curr];
+                edge.x2[1] = x2[vertex_adj];
                 edges.push_back(edge);
             }
             if (iter < n_rows - 1)
@@ -125,6 +129,10 @@ EdgeArray get_edges_(const arma::mat threat)
                 Edge edge;
                 edge.node1 = vertex_curr;
                 edge.node2 = vertex_adj;
+                edge.x1[0] = x1[vertex_curr];
+                edge.x1[1] = x1[vertex_adj];
+                edge.x2[0] = x2[vertex_curr];
+                edge.x2[1] = x2[vertex_adj];
                 edges.push_back(edge);
             }
             if (iter < n_rows - 1 && jter < n_cols - 1)
@@ -133,6 +141,10 @@ EdgeArray get_edges_(const arma::mat threat)
                 Edge edge;
                 edge.node1 = vertex_curr;
                 edge.node2 = vertex_adj;
+                edge.x1[0] = x1[vertex_curr];
+                edge.x1[1] = x1[vertex_adj];
+                edge.x2[0] = x2[vertex_curr];
+                edge.x2[1] = x2[vertex_adj];
                 edges.push_back(edge);   
             }
             if (iter < n_rows - 1 && jter > 0)
@@ -141,6 +153,10 @@ EdgeArray get_edges_(const arma::mat threat)
                 Edge edge;
                 edge.node1 = vertex_curr;
                 edge.node2 = vertex_adj;
+                edge.x1[0] = x1[vertex_curr];
+                edge.x1[1] = x1[vertex_adj];
+                edge.x2[0] = x2[vertex_curr];
+                edge.x2[1] = x2[vertex_adj];
                 edges.push_back(edge);   
             }
         }
@@ -155,7 +171,7 @@ std::vector<double> get_vertices_(const arma::mat& threat)
     //
     int n_rows = threat.n_rows;
     int n_cols = threat.n_cols;
-    std::vector<double> threat_(threat.n_elem);
+    std::vector<double> vertices_(threat.n_elem);
 
     //
     for (int iter = 0; iter < n_rows; ++iter)
@@ -163,10 +179,10 @@ std::vector<double> get_vertices_(const arma::mat& threat)
         for (int jter = 0; jter < n_cols; ++jter)
         {
             int index = iter * n_cols + jter;
-            threat_[index] = threat(iter, jter);
+            vertices_[index] = threat(iter, jter);
         }
     }
-    return threat_;
+    return vertices_;
 }
 
 // meshgrid
@@ -197,8 +213,8 @@ int main(int argc, char **argv)
 
 
     // create service client
-    rclcpp::Client<Dijkstra>::SharedPtr service =
-        node->create_client<Dijkstra>("dijkstra");
+    rclcpp::Client<DijkstraAlgo>::SharedPtr service =
+        node->create_client<DijkstraAlgo>("dijkstra_algo");
 
     //
     arma::vec x1 = arma::linspace(x_min, x_max, x_res);
@@ -208,12 +224,15 @@ int main(int argc, char **argv)
     // generate request
     auto threat_ = get_threat(x1_, x2_);
     auto vertices_ = get_vertices_(threat_);
-    auto edges_ = get_edges_(threat_);
+
+    auto x1__ = get_vertices_(x1_);
+    auto x2__ = get_vertices_(x2_);
+    auto edges_ = get_edges_(threat_, x1__, x2__);
     int32_t vertex_init_ = vertex_init;
     int32_t vertex_trgt_ = vertex_trgt;
 
     // send request
-    auto request = std::make_shared<Dijkstra::Request>();
+    auto request = std::make_shared<DijkstraAlgo::Request>();
     request->threat = vertices_;
     request->edges = edges_;
     request->vertex_init = vertex_init_;

@@ -90,14 +90,6 @@ namespace mess2_plugins {
         return quat_inv;
     }
 
-    double wrap_to_pi(double angle) {
-        while (angle > M_PI)
-            angle -= 2.0 * M_PI;
-        while (angle <= -M_PI)
-            angle += 2.0 * M_PI;
-        return angle;
-    }
-
     geometry_msgs::msg::Quaternion multiply_two_quats(geometry_msgs::msg::Quaternion quat1, geometry_msgs::msg::Quaternion quat2) {
         geometry_msgs::msg::Quaternion quat_product;
         

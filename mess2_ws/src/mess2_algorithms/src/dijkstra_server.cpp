@@ -21,19 +21,19 @@
 // ros2 custom headers and plugins
 #include "mess2_msgs/msg/edge.hpp"
 #include "mess2_msgs/msg/edge_array.hpp"
-#include "mess2_msgs/srv/dijkstra.hpp"
-#include "mess2_msgs/msg/output_dijkstra.hpp"
+#include "mess2_msgs/srv/dijkstra_algo.hpp"
+#include "mess2_msgs/msg/dijkstra_out.hpp"
 
 // type aliases
 using Edge = mess2_msgs::msg::Edge;
 using EdgeArray = mess2_msgs::msg::EdgeArray;
-using Dijkstra = mess2_msgs::srv::Dijkstra;
-using DijkstraOutput = mess2_msgs::msg::OutputDijkstra;
+using DijkstraAlgo = mess2_msgs::srv::DijkstraAlgo;
+using DijkstraOut = mess2_msgs::msg::DijkstraOut;
 
 // global parameters
 double lambda = 0.0;
 
-// transition cost
+// edge cost
 double cost(double lambda, double metric)
 {
     //
@@ -42,10 +42,10 @@ double cost(double lambda, double metric)
 }
 
 // execute algorithm
-DijkstraOutput execute_algorithm(const std::vector<double>& threat, const std::vector<Edge>& edges, int32_t node1, int32_t node2)
+DijkstraOut execute_algorithm(const std::vector<double>& threat, const std::vector<Edge>& edges, int32_t node1, int32_t node2)
 {
     // algorithm output
-    DijkstraOutput result;
+    DijkstraOut result;
 
     // vertex adjacency
     int32_t n_vertices = static_cast<int32_t>(threat.size());
@@ -108,7 +108,7 @@ DijkstraOutput execute_algorithm(const std::vector<double>& threat, const std::v
 }
 
 // execute service
-void execute_service(const std::shared_ptr<Dijkstra::Request> request, std::shared_ptr<Dijkstra::Response> response)
+void execute_service(const std::shared_ptr<DijkstraAlgo::Request> request, std::shared_ptr<DijkstraAlgo::Response> response)
 {
     // run service
     RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "running dijkstra's algorithm");
@@ -129,8 +129,8 @@ int main(int argc, char **argv)
     std::shared_ptr<rclcpp::Node> node = rclcpp::Node::make_shared("dijkstra_server");
 
     // create service server
-    rclcpp::Service<Dijkstra>::SharedPtr service =
-        node->create_service<Dijkstra>("dijkstra", &execute_service);
+    rclcpp::Service<DijkstraAlgo>::SharedPtr service =
+        node->create_service<DijkstraAlgo>("dijkstra_algo", &execute_service);
     
     //
     RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "ready to run dijkstra's algorithm");

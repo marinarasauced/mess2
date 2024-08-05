@@ -1,4 +1,4 @@
-# Dijkstra.srv
+# AlgoDijkstra.srv
 
 # request definition
 # this section defines the input parameters required to complete the service.
@@ -17,4 +17,4 @@ int32 vertex_trgt
 # this section defines the output parameters that the service will return.
 
 # path and threat metric
-OutputDijkstra result
+DijkstraOut result

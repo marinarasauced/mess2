@@ -18,28 +18,28 @@
 // custom ros2 headers and plugins
 #include "mess2_msgs/msg/euler_angles.hpp"
 #include "mess2_msgs/msg/ugv_state.hpp"
-#include "mess2_msgs/action/set_ugv_state.hpp"
+#include "mess2_msgs/action/ugv_follow_line.hpp"
 
 // namspaces
 namespace set_ugv_state_action
 {
 // ros2 node class
-class SetUGVStateActionClient : public rclcpp::Node
+class UGVFollowLineActionClient : public rclcpp::Node
 {
 //
 public:
     // type aliases
     using Quaternion = geometry_msgs::msg::Quaternion;
     using UGVState = mess2_msgs::msg::UGVState;
-    using SetUGVState = mess2_msgs::action::SetUGVState;
-    using GoalHandleSetUGVState = rclcpp_action::ClientGoalHandle<SetUGVState>;
+    using UGVFollowLine = mess2_msgs::action::UGVFollowLine;
+    using GoalHandleUGVFollowLine = rclcpp_action::ClientGoalHandle<UGVFollowLine>;
 
     // constructor
-    explicit SetUGVStateActionClient(const rclcpp::NodeOptions & options = rclcpp::NodeOptions())
+    explicit UGVFollowLineActionClient(const rclcpp::NodeOptions & options = rclcpp::NodeOptions())
     : Node("set_ugv_state_action_client", options)
     {
         //
-        this->client_ptr_ = rclcpp_action::create_client<SetUGVState>(
+        this->client_ptr_ = rclcpp_action::create_client<UGVFollowLine>(
             this,
             "set_ugv_state"
         );
@@ -66,7 +66,7 @@ public:
         }
 
         // goal generation
-        /* auto goal_msg = SetUGVState::Goal();
+        /* auto goal_msg = UGVFollowLine::Goal();
         goal_msg.name = name;
         goal_msg.model = model;
         goal_msg.k1 = k1;
@@ -76,7 +76,7 @@ public:
         goal_msg.vertex_init = vertex_init;
         goal_msg.vertex_trgt = vertex_trgt;
         goal_msg.quat_diff = quat_diff; */
-        auto goal_msg = SetUGVState::Goal();
+        auto goal_msg = UGVFollowLine::Goal();
         goal_msg.name = "burger1";
         goal_msg.model = "burger";
         goal_msg.k1 = 1.0;
@@ -99,8 +99,8 @@ public:
         RCLCPP_INFO(this->get_logger(), "sending goal");
 
         //
-        auto send_goal_options = rclcpp_action::Client<SetUGVState>::SendGoalOptions();
-        send_goal_options.goal_response_callback = [this](const GoalHandleSetUGVState::SharedPtr & goal_handle)
+        auto send_goal_options = rclcpp_action::Client<UGVFollowLine>::SendGoalOptions();
+        send_goal_options.goal_response_callback = [this](const GoalHandleUGVFollowLine::SharedPtr & goal_handle)
         {
             if (!goal_handle) {
                 RCLCPP_ERROR(this->get_logger(), "goal was rejected by server");
@@ -111,8 +111,8 @@ public:
 
         //
         send_goal_options.feedback_callback = [this](
-        GoalHandleSetUGVState::SharedPtr,
-        const std::shared_ptr<const SetUGVState::Feedback> feedback)
+        GoalHandleUGVFollowLine::SharedPtr,
+        const std::shared_ptr<const UGVFollowLine::Feedback> feedback)
         {
             std::stringstream ss;
             ss << "Local errors - x: " << feedback->error_local.state.x
@@ -122,7 +122,7 @@ public:
         };
 
         //
-        send_goal_options.result_callback = [this](const GoalHandleSetUGVState::WrappedResult & result)
+        send_goal_options.result_callback = [this](const GoalHandleUGVFollowLine::WrappedResult & result)
         {
             switch (result.code) {
                 case rclcpp_action::ResultCode::SUCCEEDED:
@@ -148,10 +148,10 @@ public:
 //
 private:
     // inherited from ros2 node
-    rclcpp_action::Client<SetUGVState>::SharedPtr client_ptr_;
+    rclcpp_action::Client<UGVFollowLine>::SharedPtr client_ptr_;
     rclcpp::TimerBase::SharedPtr timer_;
 
-}; // class SetUGVStateActionClient
+}; // class UGVFollowLineActionClient
 } // namespace set_ugv_state_action
 
-RCLCPP_COMPONENTS_REGISTER_NODE(set_ugv_state_action::SetUGVStateActionClient)
+RCLCPP_COMPONENTS_REGISTER_NODE(set_ugv_state_action::UGVFollowLineActionClient)
