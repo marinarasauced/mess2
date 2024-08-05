@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(mess2_ugv_control)
+project(mess2_ugv)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)

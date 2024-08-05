@@ -74,6 +74,7 @@ arma::mat get_threat(const arma::mat& x1, const arma::mat& x2)
     threat = c1 * threat + 1;
 
     // write threat to csv
+    /*
     std::ofstream file("threat.csv");
     if (!file.is_open())
     {
@@ -91,6 +92,7 @@ arma::mat get_threat(const arma::mat& x1, const arma::mat& x2)
         }
     }
     file.close();
+    */
 
     //
     return threat;
