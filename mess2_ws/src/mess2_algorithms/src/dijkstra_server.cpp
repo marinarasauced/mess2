@@ -22,13 +22,24 @@
 #include "mess2_msgs/msg/edge.hpp"
 #include "mess2_msgs/msg/edge_array.hpp"
 #include "mess2_msgs/srv/dijkstra.hpp"
-#include "mess2_msgs/msg/dijkstra_output.hpp"
+#include "mess2_msgs/msg/output_dijkstra.hpp"
 
 // type aliases
 using Edge = mess2_msgs::msg::Edge;
 using EdgeArray = mess2_msgs::msg::EdgeArray;
 using Dijkstra = mess2_msgs::srv::Dijkstra;
-using DijkstraOutput = mess2_msgs::msg::DijkstraOutput;
+using DijkstraOutput = mess2_msgs::msg::OutputDijkstra;
+
+// global parameters
+double lambda = 0.0;
+
+// transition cost
+double cost(double lambda, double metric)
+{
+    //
+    double cost_ = 0.1 * (lambda + metric);
+    return cost_;
+}
 
 // execute algorithm
 DijkstraOutput execute_algorithm(const std::vector<double>& threat, const std::vector<Edge>& edges, int32_t node1, int32_t node2)
@@ -43,8 +54,8 @@ DijkstraOutput execute_algorithm(const std::vector<double>& threat, const std::v
     {
         int32_t node1_ = edge.node1;
         int32_t node2_ = edge.node2;
-        neighbors[edge.node1].emplace_back(node2_, threat[node2_]);
-        neighbors[edge.node2].emplace_back(node1_, threat[node1_]);
+        neighbors[edge.node1].emplace_back(node2_, cost(lambda, threat[node2_]));
+        neighbors[edge.node2].emplace_back(node1_, cost(lambda, threat[node1_]));
     }
 
     // threat metric and priority queue

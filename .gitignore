@@ -12,3 +12,6 @@ mess2_ws/src/.vscode/
 
 # ignore vscode
 .vscode/
+
+# ignore matlab
+mess2_matlab/

@@ -12,9 +12,17 @@ find_package(mess2_msgs REQUIRED)
 add_executable(dijkstra_server src/dijkstra_server.cpp)
 ament_target_dependencies(dijkstra_server rclcpp mess2_msgs)
 
-install(TARGETS
-    dijkstra_server
-  DESTINATION lib/${PROJECT_NAME})
+add_executable(dijkstra_client src/dijkstra_client.cpp)
+ament_target_dependencies(dijkstra_client rclcpp mess2_msgs)
 
+install(TARGETS
+  dijkstra_server
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+install(TARGETS
+  dijkstra_client
+  DESTINATION lib/${PROJECT_NAME}
+)
 
 ament_package()

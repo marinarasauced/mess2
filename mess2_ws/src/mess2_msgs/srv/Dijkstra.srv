@@ -17,4 +17,4 @@ int32 vertex_trgt
 # this section defines the output parameters that the service will return.
 
 # path and threat metric
-AlgorithmOutput result
+OutputDijkstra result
