@@ -66,35 +66,11 @@ public:
         }
 
         // goal generation
-        /* auto goal_msg = UGVFollowLine::Goal();
-        goal_msg.name = name;
-        goal_msg.model = model;
-        goal_msg.k1 = k1;
-        goal_msg.k2 = k2;
-        goal_msg.speed = speed;
-        goal_msg.error_tol = error_tol;
-        goal_msg.vertex_init = vertex_init;
-        goal_msg.vertex_trgt = vertex_trgt;
-        goal_msg.quat_diff = quat_diff; */
         auto goal_msg = UGVFollowLine::Goal();
-        goal_msg.name = "burger1";
-        goal_msg.model = "burger";
-        goal_msg.k1 = 1.0;
-        goal_msg.k2 = 1.0;
-        goal_msg.speed = 0.7;
-        goal_msg.error_tol.state.x = 0.1;
-        goal_msg.error_tol.state.y = 0.1;
-        goal_msg.error_tol.state.theta = 0.1;
-        goal_msg.vertex_init.state.x = 1.0;
-        goal_msg.vertex_init.state.y = 0.0;
-        goal_msg.vertex_init.state.theta = 0.0;
-        goal_msg.vertex_trgt.state.x = 1.0;
-        goal_msg.vertex_trgt.state.y = 1.0;
-        goal_msg.vertex_trgt.state.theta = 0.0;
-        goal_msg.quat_diff.x = 0.0;
-        goal_msg.quat_diff.y = 0.0;
-        goal_msg.quat_diff.z = 0.0;
-        goal_msg.quat_diff.w = 1.0;
+        goal_msg.init_x = 1.0;
+        goal_msg.init_y = 0.0;
+        goal_msg.trgt_x = 2.1;
+        goal_msg.trgt_y = -1.0;
 
         RCLCPP_INFO(this->get_logger(), "sending goal");
 

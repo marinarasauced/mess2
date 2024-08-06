@@ -1,12 +1,18 @@
 
 // library standard headers
 #include <cmath>
+#include <cstdint>
+#include <cstring>
+#include <fstream>
 #include <functional>
 #include <iostream>
 #include <limits>
 #include <memory>
+#include <queue>
 #include <string>
 #include <thread>
+#include <tuple>
+#include <vector>
 
 // library third-party headers
 #include </usr/include/armadillo>
@@ -39,9 +45,9 @@ public:
     using Twist = geometry_msgs::msg::Twist;
     using Quaternion = geometry_msgs::msg::Quaternion;
     using EulerAngles = mess2_msgs::msg::EulerAngles;
-    using UGVState = mess2_msgs::msg::UGVState;
-    using UGVFollowLine = mess2_msgs::action::UGVFollowLine;
-    using GoalHandleUGVFollowLine = rclcpp_action::ServerGoalHandle<UGVFollowLine>;
+    using State = mess2_msgs::msg::UGVState;
+    using FollowLine = mess2_msgs::action::UGVFollowLine;
+    using GoalHandleUGVFollowLine = rclcpp_action::ServerGoalHandle<FollowLine>;
 
     // constructor
     explicit UGVFollowLineActionServer(const rclcpp::NodeOptions & options = rclcpp::NodeOptions())
@@ -50,10 +56,24 @@ public:
         // namespaces
         using namespace std::placeholders;
 
+        // declare parameters
+        this->declare_parameter<std::string>("model", "burger");
+        this->declare_parameter<std::string>("name", "ugv");
+        this->declare_parameter<double>("k1", 1.0);
+        this->declare_parameter<double>("k2", 1.0);
+        this->declare_parameter<double>("speed", 0.7);
+        this->declare_parameter<double>("error_tol_x", 0.1);
+        this->declare_parameter<double>("error_tol_y", 0.1);
+        this->declare_parameter<double>("error_tol_theta", 0.1);
+        this->declare_parameter<double>("quat_diff_x", 0.0);
+        this->declare_parameter<double>("quat_diff_y", 0.0);
+        this->declare_parameter<double>("quat_diff_z", 0.0);
+        this->declare_parameter<double>("quat_diff_w", 1.0);
+
         // handle goal requests
         auto handle_goal = [this](
             const rclcpp_action::GoalUUID & uuid,
-            std::shared_ptr<const UGVFollowLine::Goal> goal)
+            std::shared_ptr<const FollowLine::Goal> goal)
         {
             RCLCPP_INFO(this->get_logger(), "received goal request");
             (void)uuid;
@@ -78,7 +98,7 @@ public:
         };
 
         // create action server
-        this->action_server_ = rclcpp_action::create_server<UGVFollowLine>(
+        this->action_server_ = rclcpp_action::create_server<FollowLine>(
             this,
             "ugv_follow_line",
             handle_goal,
@@ -93,7 +113,7 @@ public:
 private:
 
     //
-    rclcpp_action::Server<UGVFollowLine>::SharedPtr action_server_;
+    rclcpp_action::Server<FollowLine>::SharedPtr action_server_;
     rclcpp::Publisher<Twist>::SharedPtr pub_cmd_vel_;
     rclcpp::Subscription<TransformStamped>::SharedPtr sub_vicon_;
 
@@ -108,18 +128,18 @@ private:
     double max_ang_vel_;
 
     // error tolerance
-    UGVState error_tol_;
+    State error_tol_;
 
     // initial and target vertices
-    UGVState vertex_init_;
-    UGVState vertex_trgt_;
+    State vertex_init_;
+    State vertex_trgt_;
 
     // difference quaternion
     Quaternion quat_diff_;
 
     // global state and local error
-    UGVState state_global_;
-    UGVState error_local_;
+    State state_global_;
+    State error_local_;
 
     // localization status
     bool status_ = false;
@@ -188,8 +208,9 @@ private:
 
         // load goal, define feedback and result
         (void)load_goal(goal_handle);
-        auto result = std::make_shared<UGVFollowLine::Result>();
-        auto feedback = std::make_shared<UGVFollowLine::Feedback>();
+        (void)load_parameters();
+        auto result = std::make_shared<FollowLine::Result>();
+        auto feedback = std::make_shared<FollowLine::Feedback>();
 
         // set error to inf 
         error_local_.state.x = std::numeric_limits<float>::infinity();
@@ -255,19 +276,33 @@ private:
     }
 
     // load goal
-    void load_goal(std::shared_ptr<GoalHandleUGVFollowLine> goal_handle) {
+    void load_goal(std::shared_ptr<GoalHandleUGVFollowLine> goal_handle)
+    {
 
         // get goal
         const auto goal = goal_handle->get_goal();
 
-        // vehicle identification
-        name_ = goal->name;
-        model_ = goal->model;
+        // initial vertex
+        vertex_init_.state.x = goal->init_x;
+        vertex_init_.state.y = goal->init_y;
 
-        // control parameters
-        k1_ = goal->k1;
-        k2_ = goal->k2;
-        double speed = goal->speed;
+        // target vertex
+        vertex_trgt_.state.x = goal->trgt_x;
+        vertex_trgt_.state.y = goal->trgt_y;
+    }
+
+    // load parameters
+    void load_parameters()
+    {
+        // vehicle identification
+        this->get_parameter("model", model_);
+        this->get_parameter("name", name_);
+
+        // vehicle control
+        this->get_parameter("k1", k1_);
+        this->get_parameter("k2", k2_);
+        double speed;
+        this->get_parameter("speed", speed);
         if (model_ == "burger") {
             max_lin_vel_ = speed * 0.22;
             max_ang_vel_ = speed * 2.84;
@@ -280,14 +315,15 @@ private:
         }
 
         // error tolerance
-        error_tol_ = goal->error_tol;
+        this->get_parameter("error_tol_x", error_tol_.state.x);
+        this->get_parameter("error_tol_y", error_tol_.state.y);
+        this->get_parameter("error_tol_theta", error_tol_.state.theta);
 
-        // initial and target vertices
-        vertex_init_ = goal->vertex_init;
-        vertex_trgt_ = goal->vertex_trgt;
-
-        // difference quaternion
-        quat_diff_ = goal->quat_diff;
+        // calibration quaternion
+        this->get_parameter("quat_diff_x", quat_diff_.x);
+        this->get_parameter("quat_diff_y", quat_diff_.y);
+        this->get_parameter("quat_diff_z", quat_diff_.z);
+        this->get_parameter("quat_diff_w", quat_diff_.w);
     }
 
 }; // class UGVFollowLineActionServer

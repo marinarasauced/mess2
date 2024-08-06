@@ -1,8 +1,7 @@
-# Edge.msg
+# VertexArray.msg
 
 # message definition
 # this section defines the structure of the message.
 
-# edge indices
-int32 node1
-int32 node2
+# vertex array
+Vertex[] vertices

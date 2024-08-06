@@ -15,7 +15,10 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   # algorithms
   "msg/Edge.msg"
   "msg/EdgeArray.msg"
-  "msg/DijkstraOut.msg"
+  "msg/Vertex.msg"
+  "msg/VertexArray.msg"
+  "msg/ThreatField.msg"
+  
   "srv/DijkstraAlgo.srv"
 
   # plugins

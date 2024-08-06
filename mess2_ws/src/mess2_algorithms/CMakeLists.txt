@@ -8,20 +8,24 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(mess2_msgs REQUIRED)
+find_package(mess2_plugins REQUIRED)
 
-add_executable(dijkstra_server src/dijkstra_server.cpp)
-ament_target_dependencies(dijkstra_server rclcpp mess2_msgs)
+add_executable(dijkstra_ugv_server src/dijkstra_ugv_server.cpp)
+add_executable(dijkstra_ugv_client src/dijkstra_ugv_client.cpp)
 
-add_executable(dijkstra_client src/dijkstra_client.cpp)
-ament_target_dependencies(dijkstra_client rclcpp mess2_msgs)
-
-install(TARGETS
-  dijkstra_server
-  DESTINATION lib/${PROJECT_NAME}
+target_include_directories(
+  dijkstra_ugv_server PRIVATE
+  dijkstra_ugv_client PRIVATE
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+  $<BUILD_INTERFACE:${mess2_plugins_INCLUDE_DIRS}>
 )
 
-install(TARGETS
-  dijkstra_client
+ament_target_dependencies(dijkstra_ugv_server rclcpp mess2_msgs mess2_plugins)
+ament_target_dependencies(dijkstra_ugv_client rclcpp mess2_msgs)
+
+install(
+  TARGETS dijkstra_ugv_server dijkstra_ugv_client
   DESTINATION lib/${PROJECT_NAME}
 )
 

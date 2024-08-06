@@ -3,11 +3,11 @@
 # request definition
 # this section defines the input parameters required to complete the service.
 
-# threat field and edges
-float64[] threat
+# threat field vertices and edges
+VertexArray vertices
 EdgeArray edges
 
-# initial and target vertices
+# initial and target vertex indicies
 int32 vertex_init
 int32 vertex_trgt
 
@@ -16,5 +16,5 @@ int32 vertex_trgt
 # response definition
 # this section defines the output parameters that the service will return.
 
-# path and threat metric
-DijkstraOut result
+# vertex indices
+int64[] indices

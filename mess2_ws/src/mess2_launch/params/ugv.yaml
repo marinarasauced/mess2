@@ -1,0 +1,13 @@
+ros__parameters:
+  model: "burger"
+  name: "ugv"
+  k1: 1.0
+  k2: 1.0
+  speed: 0.7
+  error_tol_x: 0.1
+  error_tol_y: 0.1
+  error_tol_theta: 0.1
+  quat_diff_x: 0.0
+  quat_diff_y: 0.0
+  quat_diff_z: 0.0
+  quat_diff_w: 1.0
