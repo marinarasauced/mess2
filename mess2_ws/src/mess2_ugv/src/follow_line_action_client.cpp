@@ -67,10 +67,10 @@ public:
 
         // goal generation
         auto goal_msg = UGVFollowLine::Goal();
-        goal_msg.init_x = 1.0;
+        goal_msg.init_x = 0.0;
         goal_msg.init_y = 0.0;
-        goal_msg.trgt_x = 2.1;
-        goal_msg.trgt_y = -1.0;
+        goal_msg.trgt_x = 1000.0;
+        goal_msg.trgt_y = 0.0;
 
         RCLCPP_INFO(this->get_logger(), "sending goal");
 

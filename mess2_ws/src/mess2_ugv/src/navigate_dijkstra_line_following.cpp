@@ -23,7 +23,7 @@
 #include "mess2_msgs/msg/vertex_array.hpp"
 #include "mess2_msgs/msg/edge.hpp"
 #include "mess2_msgs/msg/edge_array.hpp"
-#include "mess2_msgs/srv/dijkstra_algo.hpp"
+#include "mess2_msgs/srv/run_dijkstra.hpp"
 #include "mess2_msgs/action/ugv_follow_line.hpp"
 
 // type aliases
@@ -31,11 +31,11 @@ using Vertex = mess2_msgs::msg::Vertex;
 using VertexArray = mess2_msgs::msg::VertexArray;
 using Edge = mess2_msgs::msg::Edge;
 using EdgeArray = mess2_msgs::msg::EdgeArray;
-using DijkstraAlgo = mess2_msgs::srv::DijkstraAlgo;
+using RunDijkstra = mess2_msgs::srv::RunDijkstra;
 using FollowLine = mess2_msgs::action::UGVFollowLine;
 
 // path planning
-DijkstraAlgo::Response call_service_dijkstra(std::shared_ptr<rclcpp::Node> node, rclcpp::Client<DijkstraAlgo>::SharedPtr client, const VertexArray vertices, const EdgeArray edges, const int32_t vertex_init, const int32_t vertex_trgt)
+RunDijkstra::Response call_service_dijkstra(std::shared_ptr<rclcpp::Node> node, rclcpp::Client<RunDijkstra>::SharedPtr client, const VertexArray vertices, const EdgeArray edges, const int64_t vertex_init, const int64_t vertex_trgt)
 {
     // wait for service
     while (!client->wait_for_service())
@@ -49,9 +49,9 @@ DijkstraAlgo::Response call_service_dijkstra(std::shared_ptr<rclcpp::Node> node,
     }
 
     // generate and send request
-    auto request = std::make_shared<DijkstraAlgo::Request>();
-    request->vertices = vertices;
-    request->edges = edges;
+    auto request = std::make_shared<RunDijkstra::Request>();
+    request->threat.vertices = vertices;
+    request->threat.edges = edges;
     request->vertex_init = vertex_init;
     request->vertex_trgt = vertex_trgt;
     auto future = client->async_send_request(request);
@@ -64,7 +64,7 @@ DijkstraAlgo::Response call_service_dijkstra(std::shared_ptr<rclcpp::Node> node,
         auto response = future.get();
 
         // generate return
-        DijkstraAlgo::Response result;
+        RunDijkstra::Response result;
         result.indices = response->indices;
         return result;
     }
@@ -94,8 +94,8 @@ void call_action_line_following(std::shared_ptr<rclcpp::Node> node, rclcpp_actio
     {
         // generate goal
         auto goal = std::make_shared<FollowLine::Goal>();
-        goal->trgt_x = vertices[iter].x1;
-        goal->trgt_y = vertices[iter].x2;
+        goal->trgt_x = vertices[iter].position.x;
+        goal->trgt_y = vertices[iter].position.y;
 
         // send goal
         RCLCPP_INFO(node->get_logger(), "sending goal");
@@ -143,7 +143,7 @@ int main(int argc, char **argv)
     std::shared_ptr<rclcpp::Node> node = rclcpp::Node::make_shared("ugv_dijkstra_line_following");
 
     // create dijkstra service client
-    rclcpp::Client<DijkstraAlgo>::SharedPtr client_dijkstra = node->create_client<DijkstraAlgo>("dijkstra_algo");
+    rclcpp::Client<RunDijkstra>::SharedPtr client_dijkstra = node->create_client<RunDijkstra>("dijkstra_ugv");
 
     // create line following action client for each ugv
     rclcpp_action::Client<FollowLine>::SharedPtr client_follow_line_burger1 = rclcpp_action::create_client<FollowLine>(node, "ugv/burger1/follow_line");
@@ -151,8 +151,8 @@ int main(int argc, char **argv)
     // generate fake threat field data
     VertexArray vertices;
     EdgeArray edges;
-    int32_t vertex_init;
-    int32_t vertex_trgt;
+    int64_t vertex_init;
+    int64_t vertex_trgt;
 
     // call dijkstra service to generate path
     auto pathplan = call_service_dijkstra(node, client_dijkstra, vertices, edges, vertex_init, vertex_trgt);

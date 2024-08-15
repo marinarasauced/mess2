@@ -4,8 +4,7 @@
 # this section defines the structure of the message.
 
 # vertex coordinates
-float64 x1
-float64 x2
+geometry_msgs/Point position
 
 # vertex threat
 float64 threat

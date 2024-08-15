@@ -4,5 +4,5 @@
 # this section defines the structure of the message.
 
 # edge indices
-int32 node1
-int32 node2
+int64 index1
+int64 index2

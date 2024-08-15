@@ -23,14 +23,14 @@
 #include "mess2_msgs/msg/vertex_array.hpp"
 #include "mess2_msgs/msg/edge.hpp"
 #include "mess2_msgs/msg/edge_array.hpp"
-#include "mess2_msgs/srv/dijkstra_algo.hpp"
+#include "mess2_msgs/srv/run_dijkstra.hpp"
 
 // type aliases
 using Vertex = mess2_msgs::msg::Vertex;
 using VertexArray = mess2_msgs::msg::VertexArray;
 using Edge = mess2_msgs::msg::Edge;
 using EdgeArray = mess2_msgs::msg::EdgeArray;
-using DijkstraAlgo = mess2_msgs::srv::DijkstraAlgo;
+using RunDijkstra = mess2_msgs::srv::RunDijkstra;
 
 EdgeArray _get_edges(const arma::mat& threat)
 {
@@ -49,32 +49,32 @@ EdgeArray _get_edges(const arma::mat& threat)
             {
                 int vertex_adj = iter * n_cols + (jter + 1);
                 Edge edge;
-                edge.node1 = vertex_curr;
-                edge.node2 = vertex_adj;
+                edge.index1 = vertex_curr;
+                edge.index2 = vertex_adj;
                 edges.edges.push_back(edge);
             }
             if (iter < n_rows - 1)
             {
                 int vertex_adj = (iter + 1) * n_cols + jter;
                 Edge edge;
-                edge.node1 = vertex_curr;
-                edge.node2 = vertex_adj;
+                edge.index1 = vertex_curr;
+                edge.index2 = vertex_adj;
                 edges.edges.push_back(edge);
             }
             if (iter < n_rows - 1 && jter < n_cols - 1)
             {
                 int vertex_adj = (iter + 1) * n_cols + (jter + 1);
                 Edge edge;
-                edge.node1 = vertex_curr;
-                edge.node2 = vertex_adj;
+                edge.index1 = vertex_curr;
+                edge.index2 = vertex_adj;
                 edges.edges.push_back(edge);   
             }
             if (iter < n_rows - 1 && jter > 0)
             {
                 int vertex_adj = (iter + 1) * n_cols + (jter - 1);
                 Edge edge;
-                edge.node1 = vertex_curr;
-                edge.node2 = vertex_adj;
+                edge.index1 = vertex_curr;
+                edge.index2 = vertex_adj;
                 edges.edges.push_back(edge);   
             }
         }
@@ -95,8 +95,8 @@ VertexArray _get_vertices(const arma::mat& threat, const arma::mat& x1, const ar
         for (int jter = 0; jter < n_cols; ++jter)
         {
             Vertex vertex;
-            vertex.x1 = x1(iter, jter);
-            vertex.x2 = x2(iter, jter);
+            vertex.position.x = x1(iter, jter);
+            vertex.position.y = x2(iter, jter);
             vertex.threat = threat(iter, jter);
             vertices.vertices.push_back(vertex);
         }
@@ -218,7 +218,7 @@ int main(int argc, char **argv)
     node->get_parameter("filename", filename);
 
     // create service client
-    rclcpp::Client<DijkstraAlgo>::SharedPtr client  = node->create_client<DijkstraAlgo>("dijkstra_ugv");
+    rclcpp::Client<RunDijkstra>::SharedPtr client  = node->create_client<RunDijkstra>("dijkstra_ugv");
 
     // generate request
     arma::vec x1 = arma::linspace(x_min, x_max, n_cols);
@@ -233,9 +233,9 @@ int main(int argc, char **argv)
     auto vertices_ = _get_vertices(threat_, x1_, x2_);
     auto edges_ = _get_edges(threat_);
 
-    auto request = std::make_shared<DijkstraAlgo::Request>();
-    request->vertices = vertices_;
-    request->edges = edges_;
+    auto request = std::make_shared<RunDijkstra::Request>();
+    request->threat.vertices = vertices_;
+    request->threat.edges = edges_;
     request->vertex_init = vertex_init;
     request->vertex_trgt = vertex_trgt;
 

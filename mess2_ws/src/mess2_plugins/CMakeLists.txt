@@ -12,21 +12,11 @@ find_package(mess2_msgs REQUIRED)
 
 include_directories(include)
 
-add_library(angles SHARED src/angles.cpp)
-add_library(quaternions SHARED src/quaternions.cpp)
-
-ament_target_dependencies(angles
-  rclcpp
-  mess2_msgs
-)
-ament_target_dependencies(quaternions 
-  rclcpp 
-  geometry_msgs 
-  mess2_msgs
-)
+add_library(orientation SHARED src/orientation.cpp)
+ament_target_dependencies(orientation rclcpp geometry_msgs mess2_msgs)
 
 install(
-  TARGETS angles quaternions
+  TARGETS orientation
   EXPORT export_mess2_plugins
   DESTINATION lib/${PROJECT_NAME}
 )
