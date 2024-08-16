@@ -1,0 +1,14 @@
+# UAVCalibrate.srv
+
+# request definition
+# this section defines the input parameters required to complete the service.
+
+int64 num_measurements
+
+---
+
+# response definition
+# this section defines the output parameters that the service will return.
+
+bool success
+geometry_msgs/Quaternion quat_diff

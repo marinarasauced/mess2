@@ -26,7 +26,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   
   # uav
   "msg/UAVState.msg"
-  "action/UAVCalibrate.action"
+  "srv/UAVCalibrate.srv"
   
   # ugv
   "msg/UGVState.msg"
