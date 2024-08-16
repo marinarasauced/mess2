@@ -40,7 +40,7 @@ public:
         this->get_parameter("agent_name", agent_name_);
         _vicon_topic = get_vicon_topic(agent_name_);
 
-        this->create_subscription<TransformStamped>(
+        _vicon_subscription = this->create_subscription<TransformStamped>(
             _vicon_topic,
             10,
             std::bind(&UAVCalibrationServer::_vicon_callback, this, _1)
@@ -121,7 +121,7 @@ private:
                 counter1 = counter1 + 1;
                 toc = tic;
                 
-                feedback->progress = 0.0 * (counter1 / goal->num_measurements);
+                feedback->progress = 0.0 + (static_cast<double>(counter1) / goal->num_measurements) * 0.5;
                 goal_handle->publish_feedback(feedback);
             }
             rate.sleep();
@@ -147,7 +147,7 @@ private:
                 counter2 = counter2 + 1;
                 toc = tic;
                 
-                feedback->progress = 0.5 * (counter2 / goal->num_measurements);
+                feedback->progress = 0.5 + (static_cast<double>(counter2) / goal->num_measurements) * 0.5;
                 goal_handle->publish_feedback(feedback);
             }
             rate.sleep();

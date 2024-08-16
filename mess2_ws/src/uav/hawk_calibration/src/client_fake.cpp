@@ -6,6 +6,7 @@
 #include <limits>
 #include <memory>
 #include <queue>
+#include <random>
 #include <string>
 #include <thread>
 #include <tuple>
@@ -14,30 +15,44 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "rclcpp_components/register_node_macro.hpp"
+#include "geometry_msgs/msg/transform_stamped.hpp"
 
 #include "mess2_msgs/action/uav_calibrate.hpp"
+#include "mess2_plugins/rotation.hpp"
+#include "mess2_plugins/utils.hpp"
 
+using TransformStamped = geometry_msgs::msg::TransformStamped;
 using Action = mess2_msgs::action::UAVCalibrate;
 using GoalHandle = rclcpp_action::ClientGoalHandle<Action>;
 
+using namespace mess2_plugins;
 namespace mess2_actions
 {
-class UAVCalibrationClient : public rclcpp::Node
+class UAVCalibrationClientFake : public rclcpp::Node
 {
 public:
-    explicit UAVCalibrationClient(const rclcpp::NodeOptions & options = rclcpp::NodeOptions())
+    explicit UAVCalibrationClientFake(const rclcpp::NodeOptions & options = rclcpp::NodeOptions())
     : Node("uav_calibration_client", options)
     {
         this->declare_parameter("num_measurements", 1000);
+        this->declare_parameter("agent_name", "agent");
+        this->get_parameter("agent_name", agent_name_);
+        _vicon_topic = get_vicon_topic(agent_name_);
+
+        this->_transform_publisher = this->create_publisher<TransformStamped>(_vicon_topic, 10);
+
+        this->_transform_timer = this->create_wall_timer(
+            std::chrono::milliseconds(33),
+            std::bind(&UAVCalibrationClientFake::_publish_random_transform, this)
+        );
 
         this->_calibration_client = rclcpp_action::create_client<Action>(
             this,
             "calibrate_uav"
         );
 
-        this->_calibration_timer = this->create_wall_timer(std::chrono::milliseconds(500), std::bind(&UAVCalibrationClient::send_goal, this)
+        this->_calibration_timer = this->create_wall_timer(std::chrono::milliseconds(500), std::bind(&UAVCalibrationClientFake::send_goal, this)
         );
-
     }
 
     void send_goal()
@@ -59,13 +74,13 @@ public:
         auto send_goal_options = rclcpp_action::Client<Action>::SendGoalOptions();
         
         send_goal_options.goal_response_callback =
-        std::bind(&UAVCalibrationClient::_goal_response_callback, this, _1);
+        std::bind(&UAVCalibrationClientFake::_goal_response_callback, this, _1);
         
         send_goal_options.feedback_callback =
-        std::bind(&UAVCalibrationClient::_feedback_callback, this, _1, _2);
+        std::bind(&UAVCalibrationClientFake::_feedback_callback, this, _1, _2);
         
         send_goal_options.result_callback =
-        std::bind(&UAVCalibrationClient::result_callback, this, _1);
+        std::bind(&UAVCalibrationClientFake::result_callback, this, _1);
         
         this->_calibration_client->async_send_goal(goal_msg, send_goal_options);
     }
@@ -73,6 +88,11 @@ public:
 private:
     rclcpp_action::Client<Action>::SharedPtr _calibration_client;
     rclcpp::TimerBase::SharedPtr _calibration_timer;
+
+    rclcpp::Publisher<TransformStamped>::SharedPtr _transform_publisher;
+    rclcpp::TimerBase::SharedPtr _transform_timer;
+    std::string _vicon_topic;
+    std::string agent_name_;
 
     void _goal_response_callback(const GoalHandle::SharedPtr & goal_handle)
     {
@@ -115,7 +135,32 @@ private:
         RCLCPP_INFO(this->get_logger(), ss.str().c_str());
         rclcpp::shutdown();
     }
+
+    void _publish_random_transform()
+    {
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_real_distribution<> dis(-1.0, 1.0);
+
+        auto transform_msg = TransformStamped();
+        transform_msg.header.stamp = this->get_clock()->now();
+        transform_msg.header.frame_id = "world";
+        transform_msg.child_frame_id = "random_frame";
+
+        transform_msg.transform.translation.x = dis(gen);
+        transform_msg.transform.translation.y = dis(gen);
+        transform_msg.transform.translation.z = dis(gen);
+
+        transform_msg.transform.rotation.x = dis(gen);
+        transform_msg.transform.rotation.y = dis(gen);
+        transform_msg.transform.rotation.z = dis(gen);
+        transform_msg.transform.rotation.w = dis(gen);
+
+        transform_msg.transform.rotation = normalize_quat(transform_msg.transform.rotation);
+
+        _transform_publisher->publish(transform_msg);
+    }
 };  
 }
 
-RCLCPP_COMPONENTS_REGISTER_NODE(mess2_actions::UAVCalibrationClient)
+RCLCPP_COMPONENTS_REGISTER_NODE(mess2_actions::UAVCalibrationClientFake)

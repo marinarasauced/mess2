@@ -36,6 +36,7 @@ namespace mess2_plugins {
         auto temp3 = mess2_plugins::invert_quat(temp2);
 
         auto quat_diff = mess2_plugins::multiply_two_quats(temp3, temp1);
+        quat_diff = mess2_plugins::normalize_quat(quat_diff);
         return quat_diff;
     }
 
