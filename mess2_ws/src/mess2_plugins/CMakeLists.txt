@@ -13,6 +13,8 @@ find_package(mess2_msgs REQUIRED)
 include_directories(include)
 
 add_library(_rotation SHARED src/rotation.cpp)
+add_library(_utils SHARED src/rotation.cpp)
+
 
 ament_target_dependencies(
   _rotation 
@@ -21,8 +23,15 @@ ament_target_dependencies(
   "mess2_msgs"
 )
 
+ament_target_dependencies(
+  _utils
+  "rclcpp" 
+  "geometry_msgs" 
+  "mess2_msgs"
+)
+
 install(
-  TARGETS _rotation
+  TARGETS _rotation _utils
   EXPORT export_mess2_plugins
   DESTINATION lib/${PROJECT_NAME}
 )
