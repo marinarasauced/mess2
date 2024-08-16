@@ -13,8 +13,8 @@ find_package(geometry_msgs REQUIRED)
 find_package(mess2_msgs REQUIRED)
 find_package(mess2_plugins REQUIRED)
 
-
 add_library(_hawk_calibration_server SHARED src/server.cpp)
+add_library(_hawk_calibration_client SHARED src/client.cpp)
 
 target_include_directories(
   _hawk_calibration_server PRIVATE
@@ -28,6 +28,11 @@ target_compile_definitions(
   PRIVATE "HAWK_CALIBRATION_SERVER_BUILDING_DLL"
 )
 
+target_compile_definitions(
+  _hawk_calibration_client
+  PRIVATE "HAWK_CALIBRATION_CLIENT_BUILDING_DLL"
+)
+
 ament_target_dependencies(
   _hawk_calibration_server
   "rclcpp"
@@ -38,10 +43,19 @@ ament_target_dependencies(
   "mess2_plugins"
 )
 
+ament_target_dependencies(
+  _hawk_calibration_client
+  "rclcpp"
+  "rclcpp_action"
+  "rclcpp_components"
+  "mess2_msgs"
+)
+
 rclcpp_components_register_node(_hawk_calibration_server PLUGIN "mess2_actions::UAVCalibrationServer" EXECUTABLE server)
+rclcpp_components_register_node(_hawk_calibration_client PLUGIN "mess2_actions::UAVCalibrationClient" EXECUTABLE client)
 
 install(TARGETS
-  _hawk_calibration_server
+  _hawk_calibration_server _hawk_calibration_client
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin

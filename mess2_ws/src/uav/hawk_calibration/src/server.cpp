@@ -11,13 +11,9 @@
 #include <tuple>
 #include <vector>
 
-#include </usr/include/armadillo>
-
 #include "rclcpp/rclcpp.hpp"
-#include "rclcpp/wait_for_message.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "rclcpp_components/register_node_macro.hpp"
-#include "std_msgs/msg/bool.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "geometry_msgs/msg/quaternion.hpp"
 
@@ -60,12 +56,11 @@ public:
     }
 
 private:
-    std::string agent_name_;
-    TransformStamped global_;
-
-    std::string _vicon_topic;
-    rclcpp::Subscription<TransformStamped>::SharedPtr _vicon_subscription;
     rclcpp_action::Server<Action>::SharedPtr _calibration_server;
+    rclcpp::Subscription<TransformStamped>::SharedPtr _vicon_subscription;
+    TransformStamped global_;
+    std::string _vicon_topic;
+    std::string agent_name_;
 
     rclcpp_action::GoalResponse _handle_goal(const rclcpp_action::GoalUUID & uuid, std::shared_ptr<const Action::Goal> goal)
     {
@@ -122,7 +117,7 @@ private:
             if (tic > toc)
             {
                 meas1.header.stamp = tic;
-                meas1.transform = mess2_plugins::update_measurement(meas1.transform, global_.transform, counter1);
+                meas1.transform = update_measurement(meas1.transform, global_.transform, counter1);
                 counter1 = counter1 + 1;
                 toc = tic;
                 
@@ -148,7 +143,7 @@ private:
             if (tic > toc)
             {
                 meas2.header.stamp = tic;
-                meas2.transform = mess2_plugins::update_measurement(meas2.transform, global_.transform, counter2);
+                meas2.transform = update_measurement(meas2.transform, global_.transform, counter2);
                 counter2 = counter2 + 1;
                 toc = tic;
                 
@@ -158,7 +153,7 @@ private:
             rate.sleep();
         }
 
-        auto quat_diff = mess2_plugins::get_vicon_calibration(meas1.transform, meas2.transform);
+        auto quat_diff = get_vicon_calibration(meas1.transform, meas2.transform);
         if (rclcpp::ok()) {
             result->quat_diff = quat_diff;
             result->success = 1;
