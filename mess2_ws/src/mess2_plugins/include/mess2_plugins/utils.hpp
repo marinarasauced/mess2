@@ -13,6 +13,8 @@
 #include <tuple>
 #include <vector>
 
+#include "rclcpp/rclcpp.hpp"
+
 namespace mess2_plugins {
 
 std::string get_vicon_topic(std::string agent_name);

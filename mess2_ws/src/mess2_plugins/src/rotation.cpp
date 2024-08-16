@@ -105,5 +105,4 @@ namespace mess2_plugins {
         double theta = std::acos(theta_inv);
         return theta;
     }
-
 }

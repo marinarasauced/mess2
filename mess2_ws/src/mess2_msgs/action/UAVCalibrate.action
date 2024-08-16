@@ -18,5 +18,4 @@ geometry_msgs/Quaternion quat_diff
 # feedback definition
 # this section provides feedback during the execution of the goal.
 
-int8 index
 float64 progress
