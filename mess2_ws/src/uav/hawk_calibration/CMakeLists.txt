@@ -5,6 +5,10 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
+if(CMAKE_COMPILER_IS_GNUCXX AND CMAKE_VERSION VERSION_LESS "3.12")
+  target_link_libraries(${PROJECT_NAME} stdc++fs)
+endif()
+
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_action REQUIRED)
@@ -12,6 +16,7 @@ find_package(rclcpp_components REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(mess2_msgs REQUIRED)
 find_package(mess2_plugins REQUIRED)
+find_package(yaml-cpp REQUIRED)
 
 add_library(_hawk_calibration_server SHARED src/server.cpp)
 add_library(_hawk_calibration_client SHARED src/client.cpp)
@@ -62,6 +67,7 @@ ament_target_dependencies(
   "rclcpp_action"
   "rclcpp_components"
   "mess2_msgs"
+  "yaml-cpp"
 )
 
 ament_target_dependencies(
@@ -72,7 +78,11 @@ ament_target_dependencies(
   "geometry_msgs"
   "mess2_msgs"
   "mess2_plugins"
+  "yaml-cpp"
 )
+
+target_link_libraries(_hawk_calibration_client yaml-cpp)
+target_link_libraries(_hawk_calibration_client_fake yaml-cpp)
 
 rclcpp_components_register_node(_hawk_calibration_server PLUGIN "mess2_actions::UAVCalibrationServer" EXECUTABLE server)
 rclcpp_components_register_node(_hawk_calibration_client PLUGIN "mess2_actions::UAVCalibrationClient" EXECUTABLE client)
