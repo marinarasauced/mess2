@@ -17,6 +17,7 @@ find_package(geometry_msgs REQUIRED)
 find_package(mess2_msgs REQUIRED)
 find_package(mess2_plugins REQUIRED)
 find_package(yaml-cpp REQUIRED)
+find_package(std_msgs REQUIRED)
 
 add_library(_hawk_calibration_server SHARED src/server.cpp)
 add_library(_hawk_calibration_client SHARED src/client.cpp)
@@ -59,6 +60,7 @@ ament_target_dependencies(
   "geometry_msgs"
   "mess2_msgs"
   "mess2_plugins"
+  "std_msgs"
 )
 
 ament_target_dependencies(
@@ -95,6 +97,10 @@ install(TARGETS
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
+)
+
+install(DIRECTORY launch/
+  DESTINATION share/${PROJECT_NAME}/launch
 )
 
 ament_package()
