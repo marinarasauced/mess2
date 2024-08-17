@@ -17,7 +17,7 @@ Since the `vicon_driver` reads `mess2/agents/` for `calibration.yaml` files stat
 ## Installation
 The installation of this package is performed during agent setup.
 
-## Usage
+## Manual Usage
 **Before running the calibration launch files, delete the `calibration.yaml` file for AGENT_NAME in `mess2/agents/AGENT_NAME/`. By deleting the file, the `vicon_driver` will asumme a unit quaternion making the topic named `/vicon/AGENT_NAME/AGENT_NAME` unaffected**
 
 0. Delete the `calibration.yaml` file for AGENT_NAME.
