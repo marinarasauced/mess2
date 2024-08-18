@@ -27,13 +27,12 @@ using Action = mess2_msgs::action::UAVCalibrate;
 using GoalHandle = rclcpp_action::ServerGoalHandle<Action>;
 
 using namespace mess2_plugins;
-namespace mess2_actions
+namespace mess2_nodes
 {
 class UAVCalibrationServer : public rclcpp::Node
 {
 public:
-    explicit UAVCalibrationServer(const rclcpp::NodeOptions & options = rclcpp::NodeOptions())
-    : Node("uav_calibration_server", options), ready_flag_(false)
+    explicit UAVCalibrationServer(const rclcpp::NodeOptions & options = rclcpp::NodeOptions()) : Node("uav_calibration_server", options), ready_flag_(false)
     {
         using namespace std::placeholders;
 
@@ -193,4 +192,4 @@ private:
 };  
 }  
 
-RCLCPP_COMPONENTS_REGISTER_NODE(mess2_actions::UAVCalibrationServer)
+RCLCPP_COMPONENTS_REGISTER_NODE(mess2_nodes::UAVCalibrationServer)

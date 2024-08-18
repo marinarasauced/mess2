@@ -46,7 +46,7 @@ void create_directories(const std::string &path) {
 }
 
 using namespace mess2_plugins;
-namespace mess2_actions
+namespace mess2_nodes
 {
 class UAVCalibrationClientFake : public rclcpp::Node
 {
@@ -199,4 +199,4 @@ private:
 };  
 }
 
-RCLCPP_COMPONENTS_REGISTER_NODE(mess2_actions::UAVCalibrationClientFake)
+RCLCPP_COMPONENTS_REGISTER_NODE(mess2_nodes::UAVCalibrationClientFake)

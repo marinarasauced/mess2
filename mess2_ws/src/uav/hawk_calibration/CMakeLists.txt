@@ -86,9 +86,9 @@ ament_target_dependencies(
 target_link_libraries(_hawk_calibration_client yaml-cpp)
 target_link_libraries(_hawk_calibration_client_fake yaml-cpp)
 
-rclcpp_components_register_node(_hawk_calibration_server PLUGIN "mess2_actions::UAVCalibrationServer" EXECUTABLE server)
-rclcpp_components_register_node(_hawk_calibration_client PLUGIN "mess2_actions::UAVCalibrationClient" EXECUTABLE client)
-rclcpp_components_register_node(_hawk_calibration_client_fake PLUGIN "mess2_actions::UAVCalibrationClientFake" EXECUTABLE client_fake)
+rclcpp_components_register_node(_hawk_calibration_server PLUGIN "mess2_nodes::UAVCalibrationServer" EXECUTABLE server)
+rclcpp_components_register_node(_hawk_calibration_client PLUGIN "mess2_nodes::UAVCalibrationClient" EXECUTABLE client)
+rclcpp_components_register_node(_hawk_calibration_client_fake PLUGIN "mess2_nodes::UAVCalibrationClientFake" EXECUTABLE client_fake)
 
 install(TARGETS
   _hawk_calibration_server
