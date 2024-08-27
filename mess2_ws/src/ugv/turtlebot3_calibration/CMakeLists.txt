@@ -59,8 +59,8 @@ ament_target_dependencies(
 
 target_link_libraries(_turtlebot3_calibration_client yaml-cpp)
 
-rclcpp_components_register_node(_turtlebot3_calibration_server PLUGIN "mess2_actions::UAVCalibrationServer" EXECUTABLE server)
-rclcpp_components_register_node(_turtlebot3_calibration_client PLUGIN "mess2_actions::UAVCalibrationClient" EXECUTABLE client)
+rclcpp_components_register_node(_turtlebot3_calibration_server PLUGIN "mess2_nodes::UAVCalibrationServer" EXECUTABLE server)
+rclcpp_components_register_node(_turtlebot3_calibration_client PLUGIN "mess2_nodes::UAVCalibrationClient" EXECUTABLE client)
 
 install(TARGETS
   _turtlebot3_calibration_server

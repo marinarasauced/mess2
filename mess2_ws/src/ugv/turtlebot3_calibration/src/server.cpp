@@ -28,7 +28,7 @@ using Action = mess2_msgs::action::UGVCalibrate;
 using GoalHandle = rclcpp_action::ServerGoalHandle<Action>;
 
 using namespace mess2_plugins;
-namespace mess2_actions
+namespace mess2_nodes
 {
 class UGVCalibrationServer : public rclcpp::Node
 {
@@ -187,4 +187,4 @@ private:
 };  
 }  
 
-RCLCPP_COMPONENTS_REGISTER_NODE(mess2_actions::UGVCalibrationServer)
+RCLCPP_COMPONENTS_REGISTER_NODE(mess2_nodes::UGVCalibrationServer)
