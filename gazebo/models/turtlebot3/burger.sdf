@@ -201,7 +201,7 @@
       <right_joint>wheel_right_joint</right_joint>
       <wheel_separation>0.160</wheel_separation>
       <wheel_radius>0.033</wheel_radius>
-      <odom_publish_frequency>10</odom_publish_frequency>
+      <odom_publish_frequency>30</odom_publish_frequency>
       <frame_id>base_link</frame_id>
     </plugin>
   </model>
