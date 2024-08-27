@@ -1,20 +1,20 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>mess2_msgs</name>
+  <name>turtlebot3_control</name>
   <version>0.0.0</version>
-  <description>ROS2 Jazzy custom messages, services, and actions for mess2 CSCP research.</description>
+  <description>ROS2 custom package for controlling ACE Lab TurtleBot3 unmanned ground vehicles.</description>
   <maintainer email="marinarasauced@outlook.com">marinarasauced</maintainer>
   <license>Apache 2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
-  <buildtool_depend>rosidl_default_generators</buildtool_depend>
 
+  <depend>rclcpp</depend>
+  <depend>rclcpp_action</depend>
+  <depend>rclcpp_components</depend>
   <depend>geometry_msgs</depend>
-  <depend>std_msgs</depend>
-  <depend>rosidl_default_runtime</depend>
-
-  <member_of_group>rosidl_interface_packages</member_of_group>
+  <depend>mess2_msgs</depend>
+  <depend>mess2_plugins</depend>
 
   <export>
     <build_type>ament_cmake</build_type>

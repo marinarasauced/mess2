@@ -17,6 +17,8 @@
 
 namespace mess2_plugins {
 
+std::string get_cmd_vel_topic();
+
 std::string get_vicon_topic(std::string agent_name);
 
 }  // namespace mess2_plugins

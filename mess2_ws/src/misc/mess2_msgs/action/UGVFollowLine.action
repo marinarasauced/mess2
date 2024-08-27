@@ -4,12 +4,10 @@
 # this section defines the input parameters required to complete the action.
 
 # initial vertex
-float64 init_x
-float64 init_y
+geometry_msgs/Point init
 
 # target vertex
-float64 trgt_x
-float64 trgt_y
+geometry_msgs/Point trgt
 
 ---
 
@@ -25,4 +23,4 @@ bool success
 # this section provides feedback during the execution of the goal.
 
 # current local error
-mess2_msgs/UGVState error_local
+mess2_msgs/UGVState error

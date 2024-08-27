@@ -8,7 +8,8 @@ mess2_ws/src/.vscode/
 
 
 
-
+#
+log/
 
 # ignore vscode
 .vscode/
