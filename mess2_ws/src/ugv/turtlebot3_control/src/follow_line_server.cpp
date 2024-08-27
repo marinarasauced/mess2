@@ -152,17 +152,11 @@ private:
         EulerAngles euler = convert_quat_to_eul(msg->transform.rotation);
         global_.state.theta = euler.yaw;
 
-        arma::vec A = {trgt_.state.x - init_.state.x, trgt_.state.y - init_.state.y};
-        arma::vec B = {trgt_.state.x - global_.state.x, trgt_.state.y - global_.state.y};
-        arma::vec C = {global_.state.x - init_.state.x, global_.state.y - init_.state.y};
-        double a = arma::norm(A);
-        double b = arma::norm(B);
-        double alpha = std::acos(arma::dot(A, B) / (a * b));
-        double beta = std::atan2(C(1), C(0));
-        double theta = std::atan2(A(1), A(0));
-        error_.state.x = b * std::cos(alpha);
-        error_.state.y = b * std::sin(alpha) * std::copysign(1.0, beta - theta);
-        error_.state.theta = wrap_to_pi(global_.state.theta - theta);
+        auto error = get_error_from_line(global_, init_, trgt_);
+        error_.header.stamp = this->now();
+        error_.state.x = error.state.x;
+        error_.state.y = error.state.y;
+        error_.state.theta = error.state.theta;
     }
 
     void _follow_line_execute(std::shared_ptr<GoalHandle> goal_handle)
@@ -195,8 +189,7 @@ private:
             double u_lin = 0.0;
             double u_ang = -k_ang_ * error_.state.theta;
             (void) _cmd_vel_callback(u_lin, u_ang);
-            feedback->error.header.stamp = this->now();
-            feedback->error.state = error_.state;
+            feedback->error = error_;
             goal_handle->publish_feedback(feedback);
             rate.sleep();
         }
@@ -214,8 +207,7 @@ private:
             double u_lin = max_u_lin_;
             double u_ang = -k_lin_ * error_.state.y -k_ang_ * error_.state.theta;
             (void) _cmd_vel_callback(u_lin, u_ang);
-            feedback->error.header.stamp = this->now();
-            feedback->error.state = error_.state;
+            feedback->error = error_;
             goal_handle->publish_feedback(feedback);
             rate.sleep();
         }

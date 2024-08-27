@@ -34,4 +34,22 @@ namespace mess2_plugins {
             return 1.82 * speed;
         }
     }
+
+    mess2_msgs::msg::UGVState get_error_from_line(const mess2_msgs::msg::UGVState global, const mess2_msgs::msg::UGVState init, const mess2_msgs::msg::UGVState trgt)
+    {
+        arma::vec A = {trgt.state.x - init.state.x, trgt.state.y - init.state.y};
+        arma::vec B = {trgt.state.x - global.state.x, trgt.state.y - global.state.y};
+        arma::vec C = {global.state.x - init.state.x, global.state.y - init.state.y};
+        double a = arma::norm(A);
+        double b = arma::norm(B);
+        double alpha = std::acos(arma::dot(A, B) / (a * b));
+        double beta = std::atan2(C(1), C(0));
+        double theta = std::atan2(A(1), A(0));
+        
+        mess2_msgs::msg::UGVState error;
+        error.state.x = b * std::cos(alpha);
+        error.state.y = b * std::sin(alpha) * std::copysign(1.0, beta - theta);
+        error.state.theta = wrap_to_pi(global.state.theta - theta);
+        return error;
+    }
 }
