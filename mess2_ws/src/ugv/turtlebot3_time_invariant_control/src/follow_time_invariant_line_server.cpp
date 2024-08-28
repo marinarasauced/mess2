@@ -85,21 +85,28 @@ public:
             RCLCPP_INFO(this->get_logger(), "received goal request");
             (void)uuid;
 
-            if (goal->init.x == goal->trgt.x && goal->init.y == goal->trgt.y)
-            {
-                RCLCPP_INFO(this->get_logger(), "init and trgt cannot be the same");
-                return rclcpp_action::GoalResponse::REJECT;
-            }
-
             double dx = std::abs(global_.state.x - goal->trgt.x);
             double dy = std::abs(global_.state.y - goal->trgt.y);
-            if (dx < tolerance_.state.x && dy < tolerance_.state.y)
+            if (busy_)
+            {
+                RCLCPP_INFO(this->get_logger(), "agent is busy");
+                return rclcpp_action::GoalResponse::REJECT;
+            }
+            else if (dx < tolerance_.state.x && dy < tolerance_.state.y)
             {
                 RCLCPP_INFO(this->get_logger(), "trgt too similar to global");
                 return rclcpp_action::GoalResponse::REJECT;
             }
-
-            return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
+            else if (goal->init.x == goal->trgt.x && goal->init.y == goal->trgt.y)
+            {
+                RCLCPP_INFO(this->get_logger(), "init and trgt cannot be the same");
+                return rclcpp_action::GoalResponse::REJECT;
+            }
+            else
+            {
+                busy_ = true;
+                return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
+            }       
         };
 
         auto handle_cancel = [this](
@@ -176,6 +183,14 @@ private:
         error_.state.theta = std::numeric_limits<float>::infinity();
         while (error_.state.theta == std::numeric_limits<float>::infinity())
         {
+            if (goal_handle->is_canceling())
+            {
+                result->success = false;
+                goal_handle->canceled(result);
+                RCLCPP_INFO(this->get_logger(), "follow line goal cancelled");
+                busy_ = false;
+                return;
+            }
             rate.sleep();
         }
 
@@ -186,6 +201,7 @@ private:
                 result->success = false;
                 goal_handle->canceled(result);
                 RCLCPP_INFO(this->get_logger(), "follow line goal cancelled");
+                busy_ = false;
                 return;
             }
             double u_lin = 0.0;
@@ -204,6 +220,7 @@ private:
                 result->success = false;
                 goal_handle->canceled(result);
                 RCLCPP_INFO(this->get_logger(), "follow line goal cancelled");
+                busy_ = false;
                 return;
             }
             double u_lin = max_u_lin_;
@@ -219,6 +236,7 @@ private:
             result->success = true;
             goal_handle->succeed(result);
             RCLCPP_INFO(this->get_logger(), "follow line goal succeeded");
+            busy_ = false;
         }
     }
 
@@ -242,6 +260,7 @@ private:
     double max_u_ang_;
     State tolerance_;
 
+    bool busy_ = false;
     rclcpp_action::Server<Action>::SharedPtr _follow_time_invariant_line_server;
 };
 }

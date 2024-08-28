@@ -86,13 +86,21 @@ public:
             (void)uuid;
 
             double dtheta = std::abs(wrap_to_pi(global_ - goal->trgt));
-            if (dtheta < tolerance_.state.theta)
+            if (busy_)
+            {
+                RCLCPP_INFO(this->get_logger(), "agent is busy");
+                return rclcpp_action::GoalResponse::REJECT;
+            }
+            else if (dtheta < tolerance_.state.theta)
             {
                 RCLCPP_INFO(this->get_logger(), "trgt too similar to global");
                 return rclcpp_action::GoalResponse::REJECT;
             }
-
-            return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
+            else
+            {
+                busy_ = true;
+                return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
+            }            
         };
 
         auto handle_cancel = [this](
@@ -168,6 +176,7 @@ private:
                 result->success = false;
                 goal_handle->canceled(result);
                 RCLCPP_INFO(this->get_logger(), "face heading goal cancelled");
+                busy_ = false;
                 return;
             }
             double u_lin = 0.0;
@@ -183,6 +192,7 @@ private:
             result->success = true;
             goal_handle->succeed(result);
             RCLCPP_INFO(this->get_logger(), "face heading goal succeeded");
+            busy_ = false;
         }
     }
 
@@ -205,6 +215,7 @@ private:
     double max_u_ang_;
     State tolerance_;
 
+    bool busy_ = false;
     rclcpp_action::Server<Action>::SharedPtr _face_time_invariant_heading_server;
 };
 }
