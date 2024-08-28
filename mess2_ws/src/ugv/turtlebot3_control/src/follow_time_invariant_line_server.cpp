@@ -13,8 +13,6 @@
 #include <tuple>
 #include <vector>
 
-#include </usr/include/armadillo>
-
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "rclcpp_components/register_node_macro.hpp"
@@ -24,7 +22,7 @@
 
 #include "mess2_msgs/msg/euler_angles.hpp"
 #include "mess2_msgs/msg/ugv_state.hpp"
-#include "mess2_msgs/action/ugv_follow_line.hpp"
+#include "mess2_msgs/action/ugv_follow_time_invariant_line.hpp"
 #include "mess2_plugins/rotation.hpp"
 #include "mess2_plugins/ugv.hpp"
 #include "mess2_plugins/utils.hpp"
@@ -40,10 +38,10 @@ using GoalHandle = rclcpp_action::ServerGoalHandle<Action>;
 using namespace mess2_plugins;
 namespace mess2_nodes
 {
-class UGVLineFollowingServer : public rclcpp::Node
+class UGVTimeInvariantLineFollowingServer : public rclcpp::Node
 {
 public:
-    explicit UGVLineFollowingServer(const rclcpp::NodeOptions & options = rclcpp::NodeOptions()) : Node("follow_line_server", options)
+    explicit UGVTimeInvariantLineFollowingServer(const rclcpp::NodeOptions & options = rclcpp::NodeOptions()) : Node("follow_time_invariant_line_server", options)
     {
         using namespace std::placeholders;
 
@@ -59,7 +57,7 @@ public:
         _vicon_subscription = this->create_subscription<TransformStamped>(
             _vicon_topic,
             10,
-            std::bind(&UGVLineFollowingServer::_vicon_callback, this, _1)
+            std::bind(&UGVTimeInvariantLineFollowingServer::_vicon_callback, this, _1)
         );
 
         this->declare_parameter<std::string>("model", "burger");
@@ -115,13 +113,13 @@ public:
         auto handle_accepted = [this](
             const std::shared_ptr<GoalHandle> goal_handle)
         {
-            auto execute_in_thread = [this, goal_handle](){return this->_follow_line_execute(goal_handle);};
+            auto execute_in_thread = [this, goal_handle](){return this->_follow_time_invariant_line_execute(goal_handle);};
             std::thread{execute_in_thread}.detach();
         };
 
-        this->_follow_line_server = rclcpp_action::create_server<Action>(
+        this->_follow_time_invariant_line_server = rclcpp_action::create_server<Action>(
             this,
-            "follow_line",
+            "follow_time_invariant_line",
             handle_goal,
             handle_cancel,
             handle_accepted
@@ -159,7 +157,7 @@ private:
         error_.state.theta = error.state.theta;
     }
 
-    void _follow_line_execute(std::shared_ptr<GoalHandle> goal_handle)
+    void _follow_time_invariant_line_execute(std::shared_ptr<GoalHandle> goal_handle)
     {
         RCLCPP_INFO(this->get_logger(), "executing follow line goal");
         rclcpp::Rate rate(10);
@@ -240,8 +238,8 @@ private:
     double max_u_ang_;
     State tolerance_;
 
-    rclcpp_action::Server<Action>::SharedPtr _follow_line_server;
+    rclcpp_action::Server<Action>::SharedPtr _follow_time_invariant_line_server;
 };
 }
 
-RCLCPP_COMPONENTS_REGISTER_NODE(mess2_nodes::UGVLineFollowingServer)
+RCLCPP_COMPONENTS_REGISTER_NODE(mess2_nodes::UGVTimeInvariantLineFollowingServer)
