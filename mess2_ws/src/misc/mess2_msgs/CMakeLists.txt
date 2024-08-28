@@ -31,6 +31,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   # ugv
   "msg/UGVState.msg"
   "action/UGVCalibrate.action"
+  "action/UGVFaceTimeInvariantHeading.action"
   "action/UGVFollowTimeInvariantLine.action"
 
   DEPENDENCIES geometry_msgs std_msgs

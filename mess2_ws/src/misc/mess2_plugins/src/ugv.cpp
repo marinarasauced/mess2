@@ -52,4 +52,10 @@ namespace mess2_plugins {
         error.state.theta = wrap_to_pi(global.state.theta - theta);
         return error;
     }
+
+    double get_error_from_heading(const double global,const double trgt)
+    {
+        double error = wrap_to_pi(global - trgt);
+        return error;
+    }
 }

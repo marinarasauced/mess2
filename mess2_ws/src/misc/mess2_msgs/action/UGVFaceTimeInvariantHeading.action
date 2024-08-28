@@ -1,13 +1,10 @@
-# UGVFollowTimeInvariantLine.action
+# UGVFaceTimeInvariantHeading.action
 
 # goal definition
 # this section defines the input parameters required to complete the action.
 
-# initial vertex
-geometry_msgs/Point init
-
-# target vertex
-geometry_msgs/Point trgt
+# target heading
+float64 trgt
 
 ---
 
@@ -23,4 +20,4 @@ bool success
 # this section provides feedback during the execution of the goal.
 
 # current local error
-mess2_msgs/UGVState error
+float64 error

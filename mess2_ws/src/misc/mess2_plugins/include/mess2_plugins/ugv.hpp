@@ -24,4 +24,5 @@ namespace mess2_plugins
     double get_max_u_ang(const std::string model, const double speed);
 
     mess2_msgs::msg::UGVState get_error_from_line(const mess2_msgs::msg::UGVState global, const mess2_msgs::msg::UGVState init, const mess2_msgs::msg::UGVState trgt);
+    double get_error_from_heading(const double global,const double trgt);
 }

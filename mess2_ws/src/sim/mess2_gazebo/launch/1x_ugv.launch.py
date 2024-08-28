@@ -146,10 +146,20 @@ def generate_launch_description():
         ]
     )
 
-    burger1_line_follow_node = Node(
-        package='turtlebot3_control',
-        executable='follow_line_server',
-        name='burger1_follow_line_server',
+    burger1_time_invariant_heading_face_node = Node(
+        package='turtlebot3_time_invariant_control',
+        executable='face_time_invariant_heading_server',
+        name='burger1_face_time_invariant_heading_server',
+        namespace='ugv/burger1',
+        parameters=[
+            {'agent_name': 'burger1'},
+        ]
+    )
+
+    burger1_time_invariant_line_follow_node = Node(
+        package='turtlebot3_time_invariant_control',
+        executable='follow_time_invariant_line_server',
+        name='burger1_follow_time_invariant_line_server',
         namespace='ugv/burger1',
         parameters=[
             {'agent_name': 'burger1'},
@@ -169,6 +179,7 @@ def generate_launch_description():
 
     ld.add_action(bridge_node)
     ld.add_action(burger1_fake_vicon_node)
-    ld.add_action(burger1_line_follow_node)
+    ld.add_action(burger1_time_invariant_heading_face_node)
+    ld.add_action(burger1_time_invariant_line_follow_node)
 
     return ld

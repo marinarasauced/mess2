@@ -22,7 +22,7 @@
 
 #include "mess2_msgs/msg/euler_angles.hpp"
 #include "mess2_msgs/msg/ugv_state.hpp"
-#include "mess2_msgs/action/ugv_follow_time_invariant_line.hpp"
+#include "mess2_msgs/action/ugv_face_time_invariant_heading.hpp"
 #include "mess2_plugins/rotation.hpp"
 #include "mess2_plugins/ugv.hpp"
 #include "mess2_plugins/utils.hpp"
@@ -32,16 +32,16 @@ using Twist = geometry_msgs::msg::Twist;
 using Quaternion = geometry_msgs::msg::Quaternion;
 using EulerAngles = mess2_msgs::msg::EulerAngles;
 using State = mess2_msgs::msg::UGVState;
-using Action = mess2_msgs::action::UGVFollowLine;
+using Action = mess2_msgs::action::UGVFaceTimeInvariantHeading;
 using GoalHandle = rclcpp_action::ServerGoalHandle<Action>;
 
 using namespace mess2_plugins;
 namespace mess2_nodes
 {
-class UGVTimeInvariantLineFollowingServer : public rclcpp::Node
+class UGVTimeInvariantHeadingFacingServer : public rclcpp::Node
 {
 public:
-    explicit UGVTimeInvariantLineFollowingServer(const rclcpp::NodeOptions & options = rclcpp::NodeOptions()) : Node("follow_time_invariant_line_server", options)
+    explicit UGVTimeInvariantHeadingFacingServer(const rclcpp::NodeOptions & options = rclcpp::NodeOptions()) : Node("face_time_invariant_heading_server", options)
     {
         using namespace std::placeholders;
 
@@ -57,7 +57,7 @@ public:
         _vicon_subscription = this->create_subscription<TransformStamped>(
             _vicon_topic,
             10,
-            std::bind(&UGVTimeInvariantLineFollowingServer::_vicon_callback, this, _1)
+            std::bind(&UGVTimeInvariantHeadingFacingServer::_vicon_callback, this, _1)
         );
 
         this->declare_parameter<std::string>("model", "burger");
@@ -85,15 +85,8 @@ public:
             RCLCPP_INFO(this->get_logger(), "received goal request");
             (void)uuid;
 
-            if (goal->init.x == goal->trgt.x && goal->init.y == goal->trgt.y)
-            {
-                RCLCPP_INFO(this->get_logger(), "init and trgt cannot be the same");
-                return rclcpp_action::GoalResponse::REJECT;
-            }
-
-            double dx = std::abs(global_.state.x - goal->trgt.x);
-            double dy = std::abs(global_.state.y - goal->trgt.y);
-            if (dx < tolerance_.state.x && dy < tolerance_.state.y)
+            double dtheta = std::abs(wrap_to_pi(global_ - goal->trgt));
+            if (dtheta < tolerance_.state.theta)
             {
                 RCLCPP_INFO(this->get_logger(), "trgt too similar to global");
                 return rclcpp_action::GoalResponse::REJECT;
@@ -113,13 +106,13 @@ public:
         auto handle_accepted = [this](
             const std::shared_ptr<GoalHandle> goal_handle)
         {
-            auto execute_in_thread = [this, goal_handle](){return this->_follow_time_invariant_line_execute(goal_handle);};
+            auto execute_in_thread = [this, goal_handle](){return this->_face_time_invariant_heading_execute(goal_handle);};
             std::thread{execute_in_thread}.detach();
         };
 
-        this->_follow_time_invariant_line_server = rclcpp_action::create_server<Action>(
+        this->_face_time_invariant_heading_server = rclcpp_action::create_server<Action>(
             this,
-            "follow_time_invariant_line",
+            "face_time_invariant_heading",
             handle_goal,
             handle_cancel,
             handle_accepted
@@ -144,66 +137,41 @@ private:
 
     void _vicon_callback(const TransformStamped::SharedPtr msg)
     {
-        global_.header.stamp = msg->header.stamp;
-        global_.state.x = msg->transform.translation.x;
-        global_.state.y = msg->transform.translation.y;
         EulerAngles euler = convert_quat_to_eul(msg->transform.rotation);
-        global_.state.theta = euler.yaw;
+        global_= euler.yaw;
 
-        auto error = get_error_from_line(global_, init_, trgt_);
-        error_.header.stamp = this->now();
-        error_.state.x = error.state.x;
-        error_.state.y = error.state.y;
-        error_.state.theta = error.state.theta;
+        auto error = get_error_from_heading(global_, trgt_);
+        error_ = error;
     }
 
-    void _follow_time_invariant_line_execute(std::shared_ptr<GoalHandle> goal_handle)
+    void _face_time_invariant_heading_execute(std::shared_ptr<GoalHandle> goal_handle)
     {
-        RCLCPP_INFO(this->get_logger(), "executing follow line goal");
+        RCLCPP_INFO(this->get_logger(), "executing face heading goal");
         rclcpp::Rate rate(10);
 
         auto goal = goal_handle->get_goal();
-        init_.state.x = goal->init.x;
-        init_.state.y = goal->init.y;
-        trgt_.state.x = goal->trgt.x;
-        trgt_.state.y = goal->trgt.y;
+        trgt_ = goal->trgt;
 
         auto feedback = std::make_shared<Action::Feedback>();
         auto result = std::make_shared<Action::Result>();
 
-        error_.state.x = std::numeric_limits<float>::infinity();
-        error_.state.y = std::numeric_limits<float>::infinity();
-        error_.state.theta = std::numeric_limits<float>::infinity();
+        error_ = std::numeric_limits<float>::infinity();
+        while (error_ == std::numeric_limits<float>::infinity())
+        {
+            rate.sleep();
+        }
 
-        while (rclcpp::ok() && std::abs(error_.state.theta) > tolerance_.state.theta) 
+        while (rclcpp::ok() && std::abs(error_) > tolerance_.state.theta) 
         {
             if (goal_handle->is_canceling())
             {
                 result->success = false;
                 goal_handle->canceled(result);
-                RCLCPP_INFO(this->get_logger(), "follow line goal cancelled");
+                RCLCPP_INFO(this->get_logger(), "face heading goal cancelled");
                 return;
             }
             double u_lin = 0.0;
-            double u_ang = -k_ang_ * error_.state.theta;
-            (void) _cmd_vel_callback(u_lin, u_ang);
-            feedback->error = error_;
-            goal_handle->publish_feedback(feedback);
-            rate.sleep();
-        }
-        (void) _cmd_vel_callback(0.0, 0.0);
-
-        while (rclcpp::ok() && std::abs(error_.state.x) > tolerance_.state.x)
-        {
-            if (goal_handle->is_canceling())
-            {
-                result->success = false;
-                goal_handle->canceled(result);
-                RCLCPP_INFO(this->get_logger(), "follow line goal cancelled");
-                return;
-            }
-            double u_lin = max_u_lin_;
-            double u_ang = -k_lin_ * error_.state.y -k_ang_ * error_.state.theta;
+            double u_ang = -k_ang_ * error_;
             (void) _cmd_vel_callback(u_lin, u_ang);
             feedback->error = error_;
             goal_handle->publish_feedback(feedback);
@@ -214,14 +182,13 @@ private:
         if (rclcpp::ok()) {
             result->success = true;
             goal_handle->succeed(result);
-            RCLCPP_INFO(this->get_logger(), "follow line goal succeeded");
+            RCLCPP_INFO(this->get_logger(), "face heading goal succeeded");
         }
     }
 
-    State error_;
-    State global_;
-    State init_;
-    State trgt_;
+    double error_;
+    double global_;
+    double trgt_;
 
     std::string _cmd_vel_topic;
     rclcpp::Publisher<Twist>::SharedPtr _cmd_vel_publisher;
@@ -238,8 +205,8 @@ private:
     double max_u_ang_;
     State tolerance_;
 
-    rclcpp_action::Server<Action>::SharedPtr _follow_time_invariant_line_server;
+    rclcpp_action::Server<Action>::SharedPtr _face_time_invariant_heading_server;
 };
 }
 
-RCLCPP_COMPONENTS_REGISTER_NODE(mess2_nodes::UGVTimeInvariantLineFollowingServer)
+RCLCPP_COMPONENTS_REGISTER_NODE(mess2_nodes::UGVTimeInvariantHeadingFacingServer)
