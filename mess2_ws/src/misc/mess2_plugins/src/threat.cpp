@@ -133,7 +133,7 @@ namespace mess2_plugins
         double x = point->x;
         double y = point->y;
         double z = point->z;
-        for (size_t iter = 0; iter < vertices.vertices.size(); ++iter)
+        for (std::vector<mess2_msgs::msg::Vertex>::size_type iter = 0; iter < vertices.vertices.size(); ++iter)
         {
             const auto &position = vertices.vertices[iter].position;
             double distance = std::sqrt(
@@ -166,13 +166,14 @@ namespace mess2_plugins
             std::string item;
             std::array<double, 3> color;
             std::getline(ss, item, ',');
-            color[0] = std::stof(item) * 255;
+            color[0] = std::stof(item);
             std::getline(ss, item, ',');
-            color[1] = std::stof(item) * 255;
+            color[1] = std::stof(item);
             std::getline(ss, item, ',');
-            color[2] = std::stof(item) * 255;
+            color[2] = std::stof(item);
             colormap.push_back(color);
         }
+        return colormap;
     }
 
     sensor_msgs::msg::Image get_threat_field_image(const arma::mat& threat, const std::vector<std::array<double, 3>> colormap)
@@ -196,7 +197,7 @@ namespace mess2_plugins
             {
                 double threat_val = threat(iter, jter);
                 double norm_threat_val = (threat_val - threat_min) / (threat_max - threat_min);
-                norm_threat_val = std::max(1.0, std::min(0.0, norm_threat_val));
+                norm_threat_val = std::max(0.0, std::min(1.0, norm_threat_val));
 
                 uint8_t r, g, b;
                 int32_t index_colormap = static_cast<int32_t>(norm_threat_val * (colormap.size() - 1));
@@ -207,7 +208,7 @@ namespace mess2_plugins
                 g = color[1] * 255;
                 b = color[2] * 255;
 
-                size_t index_image = (iter * width + jter) * 3;
+                int64_t index_image = (iter * width + jter) * 3;
                 image.data[index_image + 0] = r;
                 image.data[index_image + 1] = g;
                 image.data[index_image + 2] = b;

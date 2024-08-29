@@ -14,7 +14,6 @@
   <depend>mess2_msgs</depend>
   <depend>mess2_plugins</depend>
   <depend>sensor_msgs</depend>
-  <depend>visualization_msgs</depend>
   <depend>ament_index_cpp</depend>
 
   <export>

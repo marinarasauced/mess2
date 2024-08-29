@@ -7,13 +7,10 @@ endif()
 
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(cv_bridge REQUIRED)
 find_package(mess2_msgs REQUIRED)
 find_package(mess2_plugins REQUIRED)
 find_package(sensor_msgs REQUIRED)
-find_package(visualization_msgs REQUIRED)
 find_package(ament_index_cpp REQUIRED)
-find_package(PCL REQUIRED COMPONENTS common io)
 
 add_executable(threat_visualizer src/threat_visualizer.cpp)
 
@@ -22,17 +19,14 @@ target_include_directories(
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
   $<BUILD_INTERFACE:${mess2_plugins_INCLUDE_DIRS}>
-  ${PCL_INCLUDE_DIRS}
 )
 
 ament_target_dependencies(
   threat_visualizer
   "rclcpp"
-  "cv_bridge"
   "mess2_msgs"
   "mess2_plugins"
   "sensor_msgs"
-  "visualization_msgs"
   "ament_index_cpp"
 )
 
@@ -47,7 +41,7 @@ install(
 )
 
 install(FILES
-  src/colormap.csv
+  src/parula.csv
   DESTINATION share/${PROJECT_NAME}
 )
 
