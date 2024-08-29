@@ -9,6 +9,7 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(mess2_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
 
 include_directories(include)
 
@@ -35,8 +36,9 @@ ament_target_dependencies(
 ament_target_dependencies(
   _threat 
   "rclcpp" 
-  "geometry_msgs" 
+  "geometry_msgs"
   "mess2_msgs"
+  "sensor_msgs"
 )
 
 ament_target_dependencies(

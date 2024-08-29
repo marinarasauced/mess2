@@ -1,3 +1,4 @@
+
 #include <cmath>
 #include <cstdint>
 #include <cstring>
@@ -35,7 +36,6 @@ class AlgorithmThreatVisualizer : public rclcpp::Node
 public:
     AlgorithmThreatVisualizer() : Node("threat_visualizer")
     {
-        RCLCPP_INFO(this->get_logger(), "generating threat field");
         int resolution = 301;
         arma::vec x_ = arma::linspace(-15.0, 15.0, resolution);
         arma::vec y_ = arma::linspace(-15.0, 15.0, resolution);
@@ -43,81 +43,9 @@ public:
         arma::vec y_scaled = arma::linspace(-3.0, 3.0, resolution);
         auto [x_mesh, y_mesh] = mess2_plugins::get_meshgrid(x_, y_);
         threat = mess2_plugins::generate_threat(x_mesh, y_mesh);
-        RCLCPP_INFO(this->get_logger(), "generated threat field");
 
-        RCLCPP_INFO(this->get_logger(), "loading colormap");
-        std::string colormap_dir = ament_index_cpp::get_package_share_directory("mess2_plotter");
-        std::string colormap_file = colormap_dir + "/colormap.csv";
-        std::ifstream file(colormap_file);
-        if (!file.is_open())
-        {
-            RCLCPP_ERROR(this->get_logger(), "failed to open colormap file");
-            return;
-        }
-
-        std::vector<std::array<double, 3>> colormap;
-        std::string line;
-        while (std::getline(file, line))
-        {
-            std::istringstream ss(line);
-            std::string item;
-            std::array<double, 3> color;
-
-            std::getline(ss, item, ',');
-            color[0] = std::stof(item);
-            std::getline(ss, item, ',');
-            color[1] = std::stof(item);
-            std::getline(ss, item, ',');
-            color[2] = std::stof(item);
-
-            if (color[0] < 0.0f || color[0] > 1.0f ||
-            color[1] < 0.0f || color[1] > 1.0f ||
-            color[2] < 0.0f || color[2] > 1.0f)
-            {
-                RCLCPP_WARN(this->get_logger(), "colormap value out of range");
-            }
-            colormap.push_back(color);
-        }
-        // for (const auto& color : colormap)
-        // {
-        //     RCLCPP_INFO(this->get_logger(), "colormap color: r=%f, g=%f, b=%f", color[0], color[1], color[2]);
-        // }
-        // RCLCPP_INFO(this->get_logger(), "loaded colormap");
-
-        RCLCPP_INFO(this->get_logger(), "creating image");
-        image.header.stamp = this->get_clock()->now();
-        image.header.frame_id = "map";
-        int32_t width = threat.n_cols;
-        int32_t height = threat.n_rows;
-        image.width = width;
-        image.height = height;
-        image.encoding = "rgb8";
-        image.step = image.width * 3;
-        image.data.resize(image.width * image.height * 3);
-        double min_threat = threat.min();
-        double max_threat = threat.max();
-        for (int32_t iter = 0; iter < height; ++iter)
-        {
-            for (int32_t jter = 0; jter < width; ++jter)
-            {
-                double value = threat(iter, jter);
-                double norm_value = (value - min_threat) / (max_threat - min_threat);
-                norm_value = std::max(0.0, std::min(1.0, norm_value));
-
-                uint8_t r, g, b;
-                int index1 = static_cast<int>(norm_value * (colormap.size() - 1));
-                index1 = std::max(0, std::min(index1, static_cast<int>(colormap.size()) - 1));
-                const auto &color = colormap[index1];
-                r = color[0] * 255;
-                g = color[1] * 255;
-                b = color[2] * 255;
-
-                size_t index2 = (iter * image.width + jter) * 3;
-                image.data[index2] = r;
-                image.data[index2 + 1] = g;
-                image.data[index2 + 2] = b;
-            }
-        }
+        auto colormap = get_colormap(ament_index_cpp::get_package_share_directory("mess2_plotter") + "/parula.csv";)
+        auto image = get_threat_field_image(threat, colormap)
 
         cv_bridge::CvImagePtr cv_ptr;
         try 

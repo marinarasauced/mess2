@@ -1,6 +1,8 @@
 
 #include <cmath>
 #include <cstdint>
+#include <cstring>
+#include <fstream>
 #include <functional>
 #include <iostream>
 #include <limits>
@@ -10,11 +12,11 @@
 #include <thread>
 #include <tuple>
 #include <vector>
-#include <fstream>
 
 #include </usr/include/armadillo>
 
 #include "geometry_msgs/msg/point.hpp"
+#include "sensor_msgs/msg/image.hpp"
 
 #include "mess2_msgs/msg/edge.hpp"
 #include "mess2_msgs/msg/edge_array.hpp"
@@ -34,6 +36,9 @@ namespace mess2_plugins {
 
     arma::mat generate_threat(const arma::mat& x_mesh, const arma::mat& y_mesh);
     mess2_msgs::msg::ThreatField get_threat_field(const int resolution);
+
+    std::vector<std::array<double, 3>> get_colormap(const std::string &file_path);
+    sensor_msgs::msg::Image get_threat_field_image(const arma::mat& threat, const std::vector<std::array<double, 3>> colormap);
 
     
 }

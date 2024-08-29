@@ -149,4 +149,70 @@ namespace mess2_plugins
         }
         return index;
     }
+
+    std::vector<std::array<double, 3>> get_colormap(const std::string &file_path)
+    {
+        std::ifstream file(file_path);
+        if (!file.is_open())
+        {
+            return {};
+        }
+
+        std::vector<std::array<double, 3>> colormap;
+        std::string line;
+        while (std::getline(file, line))
+        {
+            std::istringstream ss(line);
+            std::string item;
+            std::array<double, 3> color;
+            std::getline(ss, item, ',');
+            color[0] = std::stof(item) * 255;
+            std::getline(ss, item, ',');
+            color[1] = std::stof(item) * 255;
+            std::getline(ss, item, ',');
+            color[2] = std::stof(item) * 255;
+            colormap.push_back(color);
+        }
+    }
+
+    sensor_msgs::msg::Image get_threat_field_image(const arma::mat& threat, const std::vector<std::array<double, 3>> colormap)
+    {
+        sensor_msgs::msg::Image image;
+        image.header.frame_id = "map";
+
+        int32_t width = threat.n_cols;
+        int32_t height = threat.n_rows;
+        image.width = width;
+        image.height = height;
+        image.encoding = "rgb8";
+        image.step = width * 3;
+        image.data.resize(width * height * 3);
+
+        double threat_min = threat.min();
+        double threat_max = threat.max();
+        for (int32_t iter = 0; iter < height; ++iter)
+        {
+            for (int32_t jter = 0; jter < width; ++jter)
+            {
+                double threat_val = threat(iter, jter);
+                double norm_threat_val = (threat_val - threat_min) / (threat_max - threat_min);
+                norm_threat_val = std::max(1.0, std::min(0.0, norm_threat_val));
+
+                uint8_t r, g, b;
+                int32_t index_colormap = static_cast<int32_t>(norm_threat_val * (colormap.size() - 1));
+                index_colormap = std::max(0, std::min(index_colormap, static_cast<int32_t>(colormap.size()) - 1));
+
+                const auto &color = colormap[index_colormap];
+                r = color[0] * 255;
+                g = color[1] * 255;
+                b = color[2] * 255;
+
+                size_t index_image = (iter * width + jter) * 3;
+                image.data[index_image + 0] = r;
+                image.data[index_image + 1] = g;
+                image.data[index_image + 2] = b;
+            }
+        }
+        return image;
+    }
 }

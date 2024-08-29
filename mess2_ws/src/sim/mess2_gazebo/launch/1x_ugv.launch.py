@@ -63,7 +63,7 @@ def generate_launch_description():
 
     gz_args = DeclareLaunchArgument(
         'gz_args', 
-        default_value=f'{path} -r',
+        default_value=f'{path} -r -s',
         description='gz sim args'
     )
 
