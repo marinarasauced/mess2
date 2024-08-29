@@ -14,6 +14,7 @@ include_directories(include)
 
 add_library(_calibration SHARED src/calibration.cpp)
 add_library(_rotation SHARED src/rotation.cpp)
+add_library(_threat SHARED src/threat.cpp)
 add_library(_ugv SHARED src/ugv.cpp)
 add_library(_utils SHARED src/utils.cpp)
 
@@ -26,6 +27,13 @@ ament_target_dependencies(
 
 ament_target_dependencies(
   _rotation 
+  "rclcpp" 
+  "geometry_msgs" 
+  "mess2_msgs"
+)
+
+ament_target_dependencies(
+  _threat 
   "rclcpp" 
   "geometry_msgs" 
   "mess2_msgs"
@@ -46,7 +54,7 @@ ament_target_dependencies(
 )
 
 install(
-  TARGETS _calibration _rotation _ugv _utils
+  TARGETS _calibration _rotation _threat _ugv _utils
   EXPORT export_mess2_plugins
   DESTINATION lib/${PROJECT_NAME}
 )
