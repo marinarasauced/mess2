@@ -15,6 +15,7 @@
   <depend>geometry_msgs</depend>
   <depend>mess2_msgs</depend>
   <depend>mess2_plugins</depend>
+  <depend>sensor_msgs</depend>
 
   <export>
     <build_type>ament_cmake</build_type>

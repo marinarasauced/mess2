@@ -16,6 +16,7 @@ find_package(rclcpp_components REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(mess2_msgs REQUIRED)
 find_package(mess2_plugins REQUIRED)
+find_package(sensor_msgs REQUIRED)
 find_package(yaml-cpp REQUIRED)
 
 add_library(_turtlebot3_calibration_server SHARED src/server.cpp)

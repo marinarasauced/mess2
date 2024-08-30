@@ -204,9 +204,9 @@ namespace mess2_plugins
                 index_colormap = std::max(0, std::min(index_colormap, static_cast<int32_t>(colormap.size()) - 1));
 
                 const auto &color = colormap[index_colormap];
-                r = color[0] * 255;
+                r = color[2] * 255;
                 g = color[1] * 255;
-                b = color[2] * 255;
+                b = color[0] * 255;
 
                 int64_t index_image = (iter * width + jter) * 3;
                 image.data[index_image + 0] = r;

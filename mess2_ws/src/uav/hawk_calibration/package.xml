@@ -16,6 +16,7 @@
   <depend>mess2_msgs</depend>
   <depend>mess2_plugins</depend>
   <depend>yaml-cpp</depend>
+  <depend>sensor_msgs</depend>
   <depend>std_msgs</depend>
 
   <export>

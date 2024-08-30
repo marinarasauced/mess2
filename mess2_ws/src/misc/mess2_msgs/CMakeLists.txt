@@ -18,6 +18,8 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/Vertex.msg"
   "msg/VertexArray.msg"
   "msg/ThreatField.msg"
+  "msg/ThreatElement.msg"
+  "msg/ThreatElementArray.msg"
   
   "srv/RunDijkstra.srv"
 

@@ -16,6 +16,7 @@ find_package(rclcpp_components REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(mess2_msgs REQUIRED)
 find_package(mess2_plugins REQUIRED)
+find_package(sensor_msgs REQUIRED)
 
 add_library(_turtlebot3_face_time_invariant_heading_server SHARED src/face_time_invariant_heaving_server.cpp)
 add_library(_turtlebot3_follow_time_invariant_line_server SHARED src/follow_time_invariant_line_server.cpp)
