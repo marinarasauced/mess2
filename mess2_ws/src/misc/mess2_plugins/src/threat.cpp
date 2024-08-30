@@ -216,4 +216,37 @@ namespace mess2_plugins
         }
         return image;
     }
+
+
+    mess2_msgs::msg::ThreatElementArray get_threat_field_image_vertices(const mess2_msgs::msg::VertexArray vertices, const double r, const double g, const double b)
+    {
+        mess2_msgs::msg::ThreatElementArray elements;
+        for (size_t iter = 0; iter < vertices.vertices.size(); ++iter)
+        {
+            mess2_msgs::msg::ThreatElement element;
+            element.index = iter;
+            element.color.r = r;
+            element.color.g = g;
+            element.color.b = b;
+            element.color.a = 1.0;
+            elements.elements.push_back(element);
+        }
+        return elements;
+    }
+
+    mess2_msgs::msg::ThreatElementArray get_threat_field_image_edges(const mess2_msgs::msg::EdgeArray edges, const double r, const double g, const double b)
+    {
+        mess2_msgs::msg::ThreatElementArray elements;
+        for (size_t iter = 0; iter < edges.edges.size(); ++ iter)
+        {
+            mess2_msgs::msg::ThreatElement element;
+            element.index = iter;
+            element.color.r = r;
+            element.color.g = g;
+            element.color.b = b;
+            element.color.a = 1.0;
+            elements.elements.push_back(element);
+        }
+        return elements;
+    }
 }

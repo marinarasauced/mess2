@@ -20,6 +20,8 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/ThreatField.msg"
   "msg/ThreatElement.msg"
   "msg/ThreatElementArray.msg"
+
+  "srv/ThreatDrawFrame.srv"
   
   "srv/RunDijkstra.srv"
 

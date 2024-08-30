@@ -14,14 +14,13 @@ find_package(std_msgs REQUIRED)
 find_package(ament_index_cpp REQUIRED)
 find_package(OpenCV REQUIRED)
 
-add_executable(generate_threat_gif_frames src/generate_threat_gif_frames.cpp)
+add_executable(generate_threat_gif src/generate_threat_gif.cpp)
 add_executable(generate_threat_png src/generate_threat_png.cpp)
-add_executable(threat_visualizer src/threat_visualizer.cpp)
 
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 target_include_directories(
-  generate_threat_gif_frames PRIVATE
+  generate_threat_gif PRIVATE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
   $<BUILD_INTERFACE:${mess2_plugins_INCLUDE_DIRS}>
@@ -34,15 +33,8 @@ target_include_directories(
   $<BUILD_INTERFACE:${mess2_plugins_INCLUDE_DIRS}>
 )
 
-target_include_directories(
-  threat_visualizer PRIVATE
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
-  $<BUILD_INTERFACE:${mess2_plugins_INCLUDE_DIRS}>
-)
-
 ament_target_dependencies(
-  generate_threat_gif_frames
+  generate_threat_gif
   "rclcpp"
   "mess2_msgs"
   "mess2_plugins"
@@ -62,17 +54,8 @@ ament_target_dependencies(
   "OpenCV"
 )
 
-ament_target_dependencies(
-  threat_visualizer
-  "rclcpp"
-  "mess2_msgs"
-  "mess2_plugins"
-  "sensor_msgs"
-  "ament_index_cpp"
-)
-
 install(
-  TARGETS generate_threat_gif_frames generate_threat_png threat_visualizer
+  TARGETS generate_threat_gif generate_threat_png
   DESTINATION lib/${PROJECT_NAME}
 )
 
