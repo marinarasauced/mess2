@@ -249,4 +249,41 @@ namespace mess2_plugins
         }
         return elements;
     }
+
+    class Actor
+    {
+    public:
+        Actor(const std::string& actor_name, const std::string& actors_path) : actor_name(actor_name)
+        {
+            std::string actor_config_path = actors_path + "/" + actor_name + "/config.yaml";
+
+
+        }
+
+        void load_config(const std::string& config_path)
+        {
+
+        }
+
+        std::string get_actor_name()
+        {
+            return actor_name;
+        }
+
+        std::string get_turtlebot3_model()
+        {
+            return turtlebot3_model;
+        }
+
+    private:
+        std::string actor_name;
+        std::string turtlebot3_model;
+        std::string lds_model;
+        double k_lin;
+        double k_ang;
+        double speed;
+        double radius;
+        double u_lin_max;
+        double u_ang_max;
+    };
 }

@@ -1,0 +1,4 @@
+specification:
+  radius: "0.105"
+  u_lin_max: "0.22"
+  u_ang_max: "2.84"

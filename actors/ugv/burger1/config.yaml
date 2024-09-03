@@ -1,0 +1,7 @@
+actor:
+  actor_name: "burger1"
+  turtlebot3_model: "burger"
+  lds_model: "LDS-02"
+  k_lin: "1.0"
+  k_ang: "1.0"
+  speed: "0.7"
