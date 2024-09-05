@@ -13,7 +13,7 @@ include_directories(include)
 
 add_library(_actor SHARED src/actor.cpp)
 add_library(_cost SHARED src/cost.cpp)
-add_library(_search_low_level SHARED src/low_level/search.cpp)
+add_library(_low_level_search SHARED src/low_level/search.cpp)
 
 ament_target_dependencies(
   _actor
@@ -27,14 +27,14 @@ ament_target_dependencies(
 )
 
 ament_target_dependencies(
-  _search_low_level
+  _low_level_search
   "mess2_algorithm_msgs"
 )
 
 target_link_libraries(_actor yaml-cpp)
 
 install(
-  TARGETS _actor _cost _search_low_level
+  TARGETS _actor _cost _low_level_search
   EXPORT export_mess2_algorithm_plugins
   DESTINATION lib/${PROJECT_NAME}
 )

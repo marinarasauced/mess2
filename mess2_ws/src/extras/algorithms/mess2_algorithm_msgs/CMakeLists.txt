@@ -10,9 +10,12 @@ find_package(rosidl_default_generators REQUIRED)
 
 rosidl_generate_interfaces(
   ${PROJECT_NAME}
+  "msg/Constraint.msg"
   "msg/Edge.msg"
   "msg/Graph.msg"
   "msg/Occupancy.msg"
+  "msg/Path.msg"
+  "msg/Segment.msg"
   "msg/ThreatField.msg"
   "msg/Vertex.msg"
   DEPENDENCIES
