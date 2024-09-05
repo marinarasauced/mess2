@@ -23,10 +23,10 @@
 
 namespace mess2_algorithms
 {
-class UGVActor
+class Actor
 {
 public:
-    UGVActor(const std::string& actor_name, const std::string& actor_dir);
+    Actor(const std::string& actor_name, const std::string& actor_dir);
 
     std::string get_actor_name() const;
     std::string get_turtlebot3_model() const;

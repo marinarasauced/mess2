@@ -3,22 +3,22 @@
 
 namespace mess2_algorithms
 {
-UGVActor::UGVActor(const std::string& actor_name, const std::string& actor_dir) : actor_name(actor_name)
+Actor::Actor(const std::string& actor_name, const std::string& actor_dir) : actor_name(actor_name)
 {
     (void) load_config(actor_dir);
     (void) load_specifications(actor_dir);
 }
 
-std::string UGVActor::get_actor_name() const { return actor_name; }
-std::string UGVActor::get_turtlebot3_model() const { return turtlebot3_model; }
-std::string UGVActor::get_lds_model() const { return lds_model; }
-double UGVActor::get_k_lin() const { return k_lin; }
-double UGVActor::get_k_ang() const { return k_ang; }
-double UGVActor::get_u_lin_max() const { return u_lin_max; }
-double UGVActor::get_u_ang_max() const { return u_ang_max; }
-double UGVActor::get_radius() const { return radius; }
+std::string Actor::get_actor_name() const { return actor_name; }
+std::string Actor::get_turtlebot3_model() const { return turtlebot3_model; }
+std::string Actor::get_lds_model() const { return lds_model; }
+double Actor::get_k_lin() const { return k_lin; }
+double Actor::get_k_ang() const { return k_ang; }
+double Actor::get_u_lin_max() const { return u_lin_max; }
+double Actor::get_u_ang_max() const { return u_ang_max; }
+double Actor::get_radius() const { return radius; }
 
-void UGVActor::load_config(const std::string& actor_dir)
+void Actor::load_config(const std::string& actor_dir)
 {
     auto config_path = actor_dir + "/" + actor_name + "/config.yaml";
     auto config = YAML::LoadFile(config_path);
@@ -33,7 +33,7 @@ void UGVActor::load_config(const std::string& actor_dir)
     r_ratio = std::stod(config_actor["r_ratio"].as<std::string>("1.1"));
 }
 
-void UGVActor::load_specifications(const std::string& actor_dir)
+void Actor::load_specifications(const std::string& actor_dir)
 {
     auto specifications_path = actor_dir + "/" + turtlebot3_model + ".yaml";
     auto model = YAML::LoadFile(specifications_path);
@@ -44,10 +44,10 @@ void UGVActor::load_specifications(const std::string& actor_dir)
     u_ang_max = std::stod(model_specifications["u_ang_max"].as<std::string>("2.84")) * u_ratio;
 }
 
-std::vector<mess2_algorithm_msgs::msg::Occupancy> UGVActor::get_occupancies_by_vertex() { return occupancies_by_vertex; }
-std::vector<mess2_algorithm_msgs::msg::Occupancy> UGVActor::get_occupancies_by_edge()  { return occupancies_by_edge; }
+std::vector<mess2_algorithm_msgs::msg::Occupancy> Actor::get_occupancies_by_vertex() { return occupancies_by_vertex; }
+std::vector<mess2_algorithm_msgs::msg::Occupancy> Actor::get_occupancies_by_edge()  { return occupancies_by_edge; }
 
-void UGVActor::fill_occupancies_by_vertex(const mess2_algorithm_msgs::msg::Graph& graph)
+void Actor::fill_occupancies_by_vertex(const mess2_algorithm_msgs::msg::Graph& graph)
 {
     occupancies_by_vertex.resize(graph.vertices.size());
     for (std::vector<mess2_algorithm_msgs::msg::Vertex>::size_type iter = 0; iter < graph.vertices.size(); ++iter)
@@ -71,7 +71,7 @@ void UGVActor::fill_occupancies_by_vertex(const mess2_algorithm_msgs::msg::Graph
     }
 }
 
-void UGVActor::fill_occupancies_by_edge(const mess2_algorithm_msgs::msg::Graph& graph)
+void Actor::fill_occupancies_by_edge(const mess2_algorithm_msgs::msg::Graph& graph)
 {
     occupancies_by_edge.resize(graph.edges.size());
     for (std::vector<mess2_algorithm_msgs::msg::Edge>::size_type iter = 0; iter < graph.vertices.size(); ++iter)
