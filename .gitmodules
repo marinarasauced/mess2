@@ -1,0 +1,3 @@
+[submodule "mess2_ws/src/drivers/mess2_flir_driver"]
+	path = mess2_ws/src/drivers/mess2_flir_driver
+	url = https://github.com/marinarasauced/mess2_flir_driver.git
