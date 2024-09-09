@@ -5,7 +5,8 @@ mess2_ws/install/
 mess2_ws/log/
 mess2_ws/src/.vscode/
 
-
+#
+mess2_ws/src/drivers/mess2_flir_driver/spinnaker_camera_driver/config/_cameras.yaml
 
 
 #
