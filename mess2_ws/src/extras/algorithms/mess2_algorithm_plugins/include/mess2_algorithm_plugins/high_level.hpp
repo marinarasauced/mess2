@@ -17,6 +17,7 @@
 #include <vector>
 
 #include "mess2_algorithm_msgs/msg/constraint.hpp"
+#include "mess2_algorithm_msgs/msg/constraints.hpp"
 #include "mess2_algorithm_msgs/msg/graph.hpp"
 #include "mess2_algorithm_msgs/msg/occupancy.hpp"
 #include "mess2_algorithm_msgs/msg/path.hpp"

@@ -2,6 +2,7 @@
 #include "mess2_algorithm_plugins/high_level.hpp"
 
 using Constraint = mess2_algorithm_msgs::msg::Constraint;
+using Constraints = mess2_algorithm_msgs::msg::Constraints;
 using Graph = mess2_algorithm_msgs::msg::Graph;
 using Occupancy = mess2_algorithm_msgs::msg::Occupancy;
 using Path = mess2_algorithm_msgs::msg::Path;
@@ -10,7 +11,7 @@ using Threat = mess2_algorithm_msgs::msg::ThreatField;
 
 using Plan = std::vector<Path>;
 using PlanSort = std::vector<std::tuple<double, double, int64_t, int64_t, int64_t>>;
-using Queue = std::vector<std::vector<Constraint>>;
+using Queue = std::vector<std::vector<Constraints>>;
 
 namespace mess2_algorithms
 {
@@ -26,21 +27,21 @@ namespace mess2_algorithms
         queue.push(constraints);
 
         //
+        Plan plans;
+        plans.resize(actors.size());
         bool conflict = false;
-        while (!queue.empty() && conflict == true)
+        while (!queue.empty())
         {
             //
             auto constraints = queue.front();
             queue.pop();
 
             // run the low level search for each actor for the current constraints
-            Plan plans;
-            plans.resize(actors.size());
             for (std::vector<Actor>::size_type iter = 0; iter < actors.size(); ++iter)
             {
                 auto index_source = indices_source[iter];
                 auto index_target = indices_target[iter];
-                std::vector<Constraint> constraint = constraints[iter];
+                std::vector<Constraints> constraint = constraints[iter];
                 auto path = execute_low_level_search(
                     graph, threat, actors[iter], index_source, index_target, constraint
                 );
@@ -77,7 +78,7 @@ namespace mess2_algorithms
             }
 
             //  - run simulation of plans with estimated time steps and occupancy updating
-            for (std::vector<std::tuple<double, double, int64_t, int64_t, int64_t>>::size_type iter; iter < plansort.size(); ++iter)
+            for (std::vector<std::tuple<double, double, int64_t, int64_t, int64_t>>::size_type iter; iter < plansort.size(); ++iter && !conflict)
             {
                 // retrieve current segment
                 auto [time_curr, time_next, index_parent_curr, index_child_curr, index_actor_curr] = plansort[iter];
@@ -96,19 +97,19 @@ namespace mess2_algorithms
                 }
 
                 // search vertices until first conflict is found
-                for (std::size_t iter = 0; iter < occupied.size(); ++iter)
+                for (std::size_t jter = 0; jter < occupied.size(); ++jter)
                 {
-                    if (occupied[iter] > 1)
+                    if (occupied[jter] > 1)
                     {
                         conflict = true;
 
                         // retrieve indices of actors that occupy conflict vertex in time range
                         std::vector<int64_t> index_conflicting_actors;
-                        for (std::vector<Actor>::size_type jter = 0; jter < actors.size(); ++jter)
+                        for (std::vector<Actor>::size_type kter = 0; kter < actors.size(); ++kter)
                         {
-                            if (occupancies[jter].occupied[iter] == 1)
+                            if (occupancies[kter].occupied[jter] == 1)
                             {
-                                index_conflicting_actors.emplace_back(static_cast<int64_t>(jter));
+                                index_conflicting_actors.emplace_back(static_cast<int64_t>(kter));
                             }
                         }
 
@@ -124,51 +125,36 @@ namespace mess2_algorithms
                                     constraint_new.stamp[0] = time_curr;
                                     constraint_new.stamp[1] = time_next;
 
-                                    constraints_new[index_conflicting_other].push_back(constraint_new);
+                                    constraints_new[index_conflicting_other][jter].constraints.push_back(constraint_new);
                                 }
                             }
                             queue.push(constraints_new);
                         }
-
                         break;
                     }
                 }
+            }
 
-                // 
+            // for now, assume that if no conflict is found, that the plan is sufficient (may not be truly optimal without checking all branches until queue is empty and finding minimum threat solution of all branches)
+            if (conflict == false){ break; }
+        }
 
+        // print plans in terminal as temporary solution to visualize results
+        for (std::vector<Path>::size_type iter = 0; iter < plans.size(); ++iter)
+        {
+            std::cout << "plan for actor #" << iter << ":\n";
+            const auto& path = plans[iter];
+            for (std::vector<Segment>::size_type jter = 0; jter < path.segments.size(); ++jter)
+            {
+                const auto& segment = path.segments[jter];
+                std::cout << jter << ": "
+                          << segment.stamp[0] << ", "
+                          << segment.stamp[1] << ", "
+                          << segment.segment.index_parent << ", "
+                          << segment.segment.index_child << "\n";
             }
         }
 
-        // retrieve plans?
     }
 
 } // namespace mess2_algorithms
-
-
-
-
-
-
-
-
-// so we need a high level queue now
-// requirements
-// - each entry needs to specify constraints for each respective actor
-
-/**
- * possible approaches:
- *  - each actor can have an attribute of all vertices, for each vertex, contain a list of time range stamps
- * 
- * how would this look in practice ?
- *  - in the low level:
- *      - you would calculate the time to transition to a vertex, then get a list of occupancies at the child vertex; if one of the occupancied vertices has a constraint in a time range containing the next time (curr time + time to transition), then set cost to infinite, thus killing the next entry in the search queue effectively
- *  - in the high level:
- *      - you have a list of actors, a queue where each element contains a constraints vector for each respective actor
- * 
- * first iteration:
- *      - add an entry to the queue with no constraints for all actors
- *      - run the low level search for all actors and store the paths
- *      - for each actor, retrieve the path indices and time stamps
- *          - in this case, the stamps will consider the time from parent to child
- *          - create a list of all paths marked with their actors and time stamps
- */

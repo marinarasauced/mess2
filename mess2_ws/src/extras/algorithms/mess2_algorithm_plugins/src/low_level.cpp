@@ -1,7 +1,7 @@
 
 #include "mess2_algorithm_plugins/low_level.hpp"
 
-using Constraint = mess2_algorithm_msgs::msg::Constraint;
+using Constraints = mess2_algorithm_msgs::msg::Constraints;
 using Graph = mess2_algorithm_msgs::msg::Graph;
 using Path = mess2_algorithm_msgs::msg::Path;
 using Segment = mess2_algorithm_msgs::msg::Segment;
@@ -12,7 +12,7 @@ using Queue = std::tuple<double, double, int64_t, int64_t>;
 
 namespace mess2_algorithms
 {
-    Path execute_low_level_search(const Graph& graph, const Threat& threat, Actor& actor, int64_t& index_source, int64_t& index_target, const std::vector<Constraint>& constraint)
+    Path execute_low_level_search(const Graph& graph, const Threat& threat, Actor& actor, int64_t& index_source, int64_t& index_target, const std::vector<Constraints>& constraint)
     {
         //
         std::vector<std::vector<int64_t>> adjacency(static_cast<int64_t>(graph.vertices.size()));
@@ -52,7 +52,7 @@ namespace mess2_algorithms
             auto index_history_next = static_cast<int64_t>(history.size());
             for (const auto& index_child_curr : adjacency[index_parent_curr])
             {
-                auto [threat_next, time_next] = get_cost(graph, threat, actor, index_parent_curr, index_child_curr, index_parent_last);
+                auto [threat_next, time_next] = get_cost(graph, threat, actor, index_parent_curr, index_child_curr, index_parent_last, constraint);
 
                 history.emplace_back(threat_next, time_next, index_child_curr, index_history_curr);
                 queue.emplace(threat_next, time_next, index_child_curr, index_history_next);

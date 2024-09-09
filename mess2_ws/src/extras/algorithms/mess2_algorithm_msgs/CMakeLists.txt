@@ -11,6 +11,7 @@ find_package(rosidl_default_generators REQUIRED)
 rosidl_generate_interfaces(
   ${PROJECT_NAME}
   "msg/Constraint.msg"
+  "msg/Constraints.msg"
   "msg/Edge.msg"
   "msg/Graph.msg"
   "msg/Occupancy.msg"

@@ -17,6 +17,7 @@
 #include <vector>
 
 #include "mess2_algorithm_msgs/msg/constraint.hpp"
+#include "mess2_algorithm_msgs/msg/constraints.hpp"
 #include "mess2_algorithm_msgs/msg/graph.hpp"
 #include "mess2_algorithm_msgs/msg/path.hpp"
 #include "mess2_algorithm_msgs/msg/segment.hpp"
@@ -24,7 +25,7 @@
 #include "mess2_algorithm_plugins/actor.hpp"
 #include "mess2_algorithm_plugins/cost.hpp"
 
-using Constraint = mess2_algorithm_msgs::msg::Constraint;
+using Constraints = mess2_algorithm_msgs::msg::Constraints;
 using Graph = mess2_algorithm_msgs::msg::Graph;
 using Path = mess2_algorithm_msgs::msg::Path;
 using Threat = mess2_algorithm_msgs::msg::ThreatField;
@@ -32,7 +33,7 @@ using Threat = mess2_algorithm_msgs::msg::ThreatField;
 
 namespace mess2_algorithms
 {
-    Path execute_low_level_search(const Graph& graph, const Threat& threat, Actor& actor, int64_t& index_source, int64_t& index_target, const std::vector<Constraint>& constraint);
+    Path execute_low_level_search(const Graph& graph, const Threat& threat, Actor& actor, int64_t& index_source, int64_t& index_target, const std::vector<Constraints>& constraint);
 
 } // namespace mess2_algorithms
 

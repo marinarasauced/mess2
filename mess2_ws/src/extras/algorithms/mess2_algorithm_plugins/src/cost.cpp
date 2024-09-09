@@ -1,12 +1,13 @@
 
 #include "mess2_algorithm_plugins/cost.hpp"
 
+using Constraints = mess2_algorithm_msgs::msg::Constraints;
 using Graph = mess2_algorithm_msgs::msg::Graph;
 using Threat = mess2_algorithm_msgs::msg::ThreatField;
 
 namespace mess2_algorithms
 {
-    std::pair<double, double> get_cost(const Graph& graph, const Threat& threat, Actor& actor, const int64_t index_parent_curr, const int64_t index_child_curr, const int64_t& index_parent_last)
+    std::pair<double, double> get_cost(const Graph& graph, const Threat& threat, Actor& actor, const int64_t index_parent_curr, const int64_t index_child_curr, const int64_t& index_parent_last, const std::vector<Constraints>& constraint)
     {
         // each element can be zero or non zero depending on the logic from the child, parent, and grandparent vertices
         auto time_to_wait = actor.get_time_to_wait(index_parent_curr, index_child_curr);
