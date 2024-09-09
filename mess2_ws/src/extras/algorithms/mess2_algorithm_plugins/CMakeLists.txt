@@ -17,6 +17,7 @@ add_library(_graph SHARED src/graph.cpp)
 add_library(_high_level SHARED src/high_level.cpp)
 add_library(_low_level SHARED src/low_level.cpp)
 add_library(_threat SHARED src/threat.cpp)
+add_library(_utils SHARED src/utils.cpp)
 
 ament_target_dependencies(
   _actor
@@ -52,7 +53,7 @@ ament_target_dependencies(
 target_link_libraries(_actor yaml-cpp)
 
 install(
-  TARGETS _actor _cost _graph _high_level _low_level _threat
+  TARGETS _actor _cost _graph _high_level _low_level _threat _utils
   EXPORT export_mess2_algorithm_plugins
   DESTINATION lib/${PROJECT_NAME}
 )
