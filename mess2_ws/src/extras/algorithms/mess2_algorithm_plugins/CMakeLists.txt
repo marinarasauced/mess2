@@ -13,8 +13,10 @@ include_directories(include)
 
 add_library(_actor SHARED src/actor.cpp)
 add_library(_cost SHARED src/cost.cpp)
+add_library(_graph SHARED src/graph.cpp)
 add_library(_high_level SHARED src/high_level.cpp)
 add_library(_low_level SHARED src/low_level.cpp)
+add_library(_threat SHARED src/threat.cpp)
 
 ament_target_dependencies(
   _actor
@@ -28,6 +30,11 @@ ament_target_dependencies(
 )
 
 ament_target_dependencies(
+  _graph
+  "mess2_algorithm_msgs"
+)
+
+ament_target_dependencies(
   _high_level
   "mess2_algorithm_msgs"
 )
@@ -37,10 +44,15 @@ ament_target_dependencies(
   "mess2_algorithm_msgs"
 )
 
+ament_target_dependencies(
+  _threat
+  "mess2_algorithm_msgs"
+)
+
 target_link_libraries(_actor yaml-cpp)
 
 install(
-  TARGETS _actor _cost _high_level _low_level
+  TARGETS _actor _cost _graph _high_level _low_level _threat
   EXPORT export_mess2_algorithm_plugins
   DESTINATION lib/${PROJECT_NAME}
 )

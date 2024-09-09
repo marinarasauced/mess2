@@ -52,7 +52,7 @@ namespace mess2_algorithms
             auto index_history_next = static_cast<int64_t>(history.size());
             for (const auto& index_child_curr : adjacency[index_parent_curr])
             {
-                auto [threat_next, time_next] = get_cost(graph, threat, actor, index_parent_curr, index_child_curr, index_parent_last, constraint);
+                auto [threat_next, time_next] = get_cost(graph, threat, actor, index_parent_curr, index_child_curr, index_parent_last, constraint, threat_curr, time_curr);
 
                 history.emplace_back(threat_next, time_next, index_child_curr, index_history_curr);
                 queue.emplace(threat_next, time_next, index_child_curr, index_history_next);
