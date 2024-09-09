@@ -4,4 +4,7 @@ actor:
   lds_model: "LDS-02"
   k_lin: "1.0"
   k_ang: "1.0"
-  speed: "0.7"
+  u_ratio: "0.7"
+  r_ratio: "1.1"
+  x_lin_tol: "0.01"
+  x_ang_tol: "0.01"

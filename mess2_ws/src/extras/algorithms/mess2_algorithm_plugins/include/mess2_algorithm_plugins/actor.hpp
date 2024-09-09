@@ -1,6 +1,8 @@
 #ifndef MESS2_ALGORITHM_PLUGINS_ACTOR_HPP
 #define MESS2_ALGORITHM_PLUGINS_ACTOR_HPP
 
+#include <yaml-cpp/yaml.h>
+
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
@@ -15,11 +17,16 @@
 #include <thread>
 #include <tuple>
 #include <vector>
-#include <yaml-cpp/yaml.h>
-#include </usr/include/armadillo>
 
 #include "mess2_algorithm_msgs/msg/graph.hpp"
 #include "mess2_algorithm_msgs/msg/occupancy.hpp"
+#include "mess2_algorithm_msgs/msg/threat_field.hpp"
+#include "mess2_algorithm_msgs/msg/vertex.hpp"
+
+using Graph = mess2_algorithm_msgs::msg::Graph;
+using Occupancy = mess2_algorithm_msgs::msg::Occupancy;
+using Threat = mess2_algorithm_msgs::msg::ThreatField;
+using Vertex = mess2_algorithm_msgs::msg::Vertex;
 
 namespace mess2_algorithms
 {
@@ -36,12 +43,16 @@ public:
     double get_u_lin_max() const;
     double get_u_ang_max() const;
     double get_radius() const;
+    double get_x_lin_tol() const;
+    double get_x_ang_tol() const;
 
-    std::vector<mess2_algorithm_msgs::msg::Occupancy> get_occupancies_by_vertex();
-    std::vector<mess2_algorithm_msgs::msg::Occupancy> get_occupancies_by_edge();
+    double get_time_to_wait(const int64_t& index_parent, const int64_t& index_child);
+    double get_time_to_rotate(const Vertex& vertex_parent, const Vertex& vertex_child, const Vertex& vertex_grandparent);
+    double get_time_to_translate(const Vertex& vertex_parent, const Vertex& vertex_child);
 
-    void fill_occupancies_by_vertex(const mess2_algorithm_msgs::msg::Graph& graph);
-    void fill_occupancies_by_edge(const mess2_algorithm_msgs::msg::Graph& graph);
+    void fill_occupancies_by_vertex(const Graph& graph);
+    Occupancy retrieve_occupancies_at_vertex(const int64_t& index_vertex);
+    double retrieve_occupied_threat_at_vertex(const Threat& threat, const int64_t& index_vertex);
 
 private:
     void load_config(const std::string& actor_dir);
@@ -54,11 +65,12 @@ private:
     double k_ang;
     double u_ratio;
     double r_ratio;
-    double radius;
     double u_lin_max;
     double u_ang_max;
-    std::vector<mess2_algorithm_msgs::msg::Occupancy> occupancies_by_vertex;
-    std::vector<mess2_algorithm_msgs::msg::Occupancy> occupancies_by_edge;
+    double radius;
+    double x_lin_tol;
+    double x_ang_tol;
+    std::vector<Occupancy> occupancies_by_vertex;
 };
 
 } // namespace mess2_algorithms
