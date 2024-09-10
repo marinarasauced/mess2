@@ -66,7 +66,7 @@ public:
 private:
     // hard-coded parameters
     std::string actor_dir_ = "/home/marinarasauced/Projets/mess2/actors/ugv";
-    double resolution_ = 3;
+    int64_t resolution_ = 11;
 };
 
 int main(int argc, char **argv)
