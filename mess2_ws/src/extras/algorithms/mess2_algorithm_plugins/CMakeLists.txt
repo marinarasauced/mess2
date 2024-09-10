@@ -51,11 +51,13 @@ ament_target_dependencies(
 )
 
 target_link_libraries(_actor yaml-cpp)
+target_link_libraries(_low_level _cost)
+# target_link_libraries(_high_level _low_level)
 
 install(
   TARGETS _actor _cost _graph _high_level _low_level _threat _utils
   EXPORT export_mess2_algorithm_plugins
-  DESTINATION lib/${PROJECT_NAME}
+  LIBRARY DESTINATION lib
 )
 
 install(

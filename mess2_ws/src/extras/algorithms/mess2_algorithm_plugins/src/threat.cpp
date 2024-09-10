@@ -20,7 +20,7 @@ Threat generate_threat(const arma::mat& x_mesh, const arma::mat& y_mesh)
         { 3.2579, 1.5239, 1.2908,  2.0099,  2.7261,  2.7449,  2.9398,  2.7439,  0.3691, 3.1097,  3},
         { 0.4039, 0.4382, 2.4844,  1.9652,  1.9238,  1.8567,  0.5470,  1.0401,  0.7011, 3.3193,  3}
     };
-    double c1 = 5.0;
+    double c1 = 5;
 
     for (int iter = 0; iter < n_peaks; ++iter)
     {

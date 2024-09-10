@@ -6,6 +6,8 @@ using Occupancy = mess2_algorithm_msgs::msg::Occupancy;
 using Threat = mess2_algorithm_msgs::msg::ThreatField;
 using Vertex = mess2_algorithm_msgs::msg::Vertex;
 
+double counter = 0;
+
 namespace mess2_algorithms
 {
     Actor::Actor(const std::string& actor_name, const std::string& actor_dir) : actor_name(actor_name)
@@ -79,9 +81,11 @@ namespace mess2_algorithms
         auto theta = theta_p2c - theta_gp2p;
         if (theta > M_PI){
             theta -= 2 * M_PI;
-        } else if (theta < M_PI){
+        } else if (theta < -M_PI){
             theta += 2 * M_PI;
         }
+
+        theta = std::abs(theta);
 
         if (theta == 0.0){
             return 0.0;
@@ -116,7 +120,8 @@ namespace mess2_algorithms
         for (std::vector<Vertex>::size_type iter = 0; iter < graph.vertices.size(); ++iter)
         {
             Occupancy occupancy;
-            occupancy.occupied.resize(graph.vertices.size(), 0);
+            occupancy.occupied.resize(graph.vertices.size());
+
             const auto vertex_parent = graph.vertices[iter];
             for (std::vector<Vertex>::size_type jter = 0; jter < graph.vertices.size(); ++jter)
             {
@@ -127,6 +132,8 @@ namespace mess2_algorithms
                 );
                 if (distance <= radius){
                     occupancy.occupied[jter] = 1;
+                } else {
+                    occupancy.occupied[jter] = 0;
                 }
             }
             occupancies_by_vertex[iter] = occupancy;
@@ -144,13 +151,7 @@ namespace mess2_algorithms
         double threat_cummulative = 0.0;
         auto occupancies = retrieve_occupancies_at_vertex(index_vertex);
 
-        auto num_threat = static_cast<int64_t>(threat.threat.size());
-        auto num_vertex = static_cast<int64_t>(occupancies.occupied.size());
-        if (num_threat != num_vertex){
-            // raise error
-        }
-
-        for (std::vector<double>::size_type iter; iter < threat.threat.size(); ++iter)
+        for (std::vector<double>::size_type iter = 0; iter < threat.threat.size(); ++iter)
         {
             auto threat_value = threat.threat[iter];
             auto occupancy_bool = occupancies.occupied[iter];

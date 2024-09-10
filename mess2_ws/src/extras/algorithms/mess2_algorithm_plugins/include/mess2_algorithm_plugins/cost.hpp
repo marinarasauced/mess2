@@ -28,7 +28,7 @@ using Threat = mess2_algorithm_msgs::msg::ThreatField;
 
 namespace mess2_algorithms
 {
-    std::pair<double, double> get_cost(const Graph& graph, const Threat& threat, Actor& actor, const int64_t index_parent_curr, const int64_t index_child_curr, const int64_t& index_parent_last, const std::vector<Constraints>& constraints, const double& threat_curr, const double& time_curr);
+    std::pair<double, double> get_cost(const Graph& graph, const Threat& threat, Actor& actor, const int64_t& index_parent_curr, const int64_t& index_child_curr, const int64_t& index_parent_last, const std::vector<Constraints>& constraints, const double& threat_curr, const double& time_curr);
 
 } // namespace mess2_algorithms
 

@@ -31,7 +31,7 @@ using Threat = mess2_algorithm_msgs::msg::ThreatField;
 
 namespace mess2_algorithms
 {
-    void execute_high_level_search(const Graph& graph, const Threat& threat, std::vector<Actor>& actors, const std::vector<int64_t>& indices_source, const std::vector<int64_t> indices_target);
+    void execute_high_level_search(const Graph& graph, const Threat& threat, std::vector<Actor>& actors, const std::vector<int64_t>& indices_source, const std::vector<int64_t>& indices_target);
 
 } // namespace mess2_algorithms
 

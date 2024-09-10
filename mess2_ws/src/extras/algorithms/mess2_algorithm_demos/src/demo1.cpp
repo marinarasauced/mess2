@@ -16,17 +16,13 @@
 
 #include "rclcpp/rclcpp.hpp"
 
-#include "mess2_algorithm_msgs/msg/goal.hpp"
 #include "mess2_algorithm_plugins/actor.hpp"
+#include "mess2_algorithm_plugins/cost.hpp"
 #include "mess2_algorithm_plugins/graph.hpp"
+#include "mess2_algorithm_plugins/low_level.hpp"
+#include "mess2_algorithm_plugins/high_level.hpp"
 #include "mess2_algorithm_plugins/threat.hpp"
 #include "mess2_algorithm_plugins/utils.hpp"
-
-#include "mess2_algorithm_plugins/low_level/search.hpp"
-
-// #include "mess2_algorithm_plugins/actor.hpp"
-// #include "mess2_algorithm_plugins/cost.hpp"
-// #include "mess2_algorithm_plugins/low_level/search.hpp"
 
 using namespace mess2_algorithms;
 
@@ -35,50 +31,49 @@ class AlgorithmDemo1 : public rclcpp::Node
 public:
     AlgorithmDemo1() : Node("demo1")
     {
-        this->declare_parameter("actor_dir", "/home/marinarasauced/Projets/mess2/actors/ugv");
-        this->declare_parameter("actor_names", std::vector<std::string>({"burger1"}));
-        this->declare_parameter("resolution", 11);
-        
-        this->get_parameter("actor_dir", actor_dir_);
-        this->get_parameter("actor_names", actor_names_);
-        this->get_parameter("resolution", resolution_);
-
+        // graph generation
+        bool diagonals = false;
         auto [x_graph, y_graph] = get_mesh(-3.0, 3.0, -3.0, 3.0, resolution_);
-        auto graph = generate_graph(x_graph, y_graph);
-        graph.type = "undirected";
+        auto graph = generate_graph(x_graph, y_graph, diagonals);
+        graph.type = "directed";
 
+        // threat generation
         auto [x_weights, y_weights] = get_mesh(-15.0, 15.0, -15.0, 15.0, resolution_);
-        auto weights = generate_threat(x_weights, y_weights);
+        auto threat = generate_threat(x_weights, y_weights);
 
-        auto source = get_index_of_vertex(graph.vertices, -3.0, -3.0);
-        auto target = get_index_of_vertex(graph.vertices, 3.0, 3.0);
+        // list of actors generation
+        auto burger1 = Actor("burger1", actor_dir_);
+        burger1.fill_occupancies_by_vertex(graph);
 
         std::vector<Actor> actors;
-        for (const std::string actor_name : actor_names_){
-            actors.emplace_back(Actor(actor_name, actor_dir_));
-        }
+        actors.push_back(burger1);
 
-        for (Actor actor : actors)
-        {
-            pathplan
-        }
+        // source index generation
+        std::vector<int64_t> indices_source;
+        indices_source.emplace_back(get_index_vertex_from_position(graph.vertices, -3.0, -3.0));
 
+        // target index generation
+        std::vector<int64_t> indices_target;
+        indices_target.emplace_back(get_index_vertex_from_position(graph.vertices, 3.0, 3.0));
 
-        // auto graph
-
-        // auto graph = 
-        // auto actor1 = Actor("burger1", "home/marinarasauced/Projets/mess2/actors/ugv");
+        // run algorithm
+        // std::vector<Constraints> constraints;
+        // constraints.resize(9);
+        // auto path = execute_low_level_search(graph, threat, actors[0], indices_source[0], indices_target[0], constraints);
+        execute_high_level_search(graph, threat, actors, indices_source, indices_target);
     }
 
 private:
-
-
-
-
-
-
-
-    double resolution_;
-    std::vector<std::string> actor_names_;
-    std::string actor_dir_;
+    // hard-coded parameters
+    std::string actor_dir_ = "/home/marinarasauced/Projets/mess2/actors/ugv";
+    double resolution_ = 3;
 };
+
+int main(int argc, char **argv)
+{
+    rclcpp::init(argc, argv);
+    auto node = std::make_shared<AlgorithmDemo1>();
+    // rclcpp::spin(node);
+    rclcpp::shutdown();
+    return 0;
+}

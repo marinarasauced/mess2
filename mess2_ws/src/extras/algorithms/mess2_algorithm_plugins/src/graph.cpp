@@ -26,7 +26,7 @@ namespace mess2_algorithms
         return vertices;
     }
 
-    std::vector<Edge> generate_edges(const arma::mat& x_mesh, const arma::mat& y_mesh)
+    std::vector<Edge> generate_edges(const arma::mat& x_mesh, const arma::mat& y_mesh, const bool& diagonals)
     {
         std::vector<Edge> edges;
         // only use diagonal elements if the assumption that the actor size >> threat resolution as to prevent collisions on intersecting diagonal edges
@@ -37,7 +37,7 @@ namespace mess2_algorithms
         {
             for (int jter = 0; jter < n_cols; ++jter)
             {
-                int64_t index_parent = iter * n_cols + (jter + 1);
+                int64_t index_parent = iter * n_cols + jter;
                 if (jter < n_cols - 1)
                 {
                     int64_t index_child = iter * n_cols + (jter + 1);
@@ -54,32 +54,32 @@ namespace mess2_algorithms
                     edge.index_child = index_child;
                     edges.push_back(edge);
                 }
-                // if (iter < n_rows - 1 && jter < n_cols - 1)
-                // {
-                //     int64_t index_child = (iter + 1) * n_cols + (jter + 1);
-                //     Edge edge;
-                //     edge.index_parent = index_parent;
-                //     edge.index_child = index_child;
-                //     edges.push_back(edge); 
-                // }
-                // if (iter < n_rows - 1 && jter > 0)
-                // {
-                //     int64_t index_child = (iter + 1) * n_cols + (jter - 1);
-                //     Edge edge;
-                //     edge.index_parent = index_parent;
-                //     edge.index_child = index_child;
-                //     edges.push_back(edge); 
-                // }
+                if (iter < n_rows - 1 && jter < n_cols - 1 && diagonals)
+                {
+                    int64_t index_child = (iter + 1) * n_cols + (jter + 1);
+                    Edge edge;
+                    edge.index_parent = index_parent;
+                    edge.index_child = index_child;
+                    edges.push_back(edge); 
+                }
+                if (iter < n_rows - 1 && jter > 0 && diagonals)
+                {
+                    int64_t index_child = (iter + 1) * n_cols + (jter - 1);
+                    Edge edge;
+                    edge.index_parent = index_parent;
+                    edge.index_child = index_child;
+                    edges.push_back(edge); 
+                }
             }
         }
         return edges;
     }
 
-    Graph generate_graph(const arma::mat& x_mesh, const arma::mat& y_mesh)
+    Graph generate_graph(const arma::mat& x_mesh, const arma::mat& y_mesh, const bool& diagonals)
     {
         Graph graph;
         graph.vertices = generate_vertices(x_mesh, y_mesh);
-        graph.edges = generate_edges(x_mesh, y_mesh);
+        graph.edges = generate_edges(x_mesh, y_mesh, diagonals);
         return graph;
     }
 

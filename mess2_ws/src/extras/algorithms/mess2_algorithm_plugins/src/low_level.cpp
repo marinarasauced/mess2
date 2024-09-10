@@ -36,11 +36,18 @@ namespace mess2_algorithms
             }
         }
 
+        for (size_t i = 0; i < adjacency.size(); ++i) {
+            for (const auto& child : adjacency[i]) {
+                std::cout << i << " to " << child << std::endl;
+            }
+        }
+
         //
         history.emplace_back(0.0, 0.0, index_source, -1);
         queue.emplace(0.0, 0.0, index_source, 0);
 
         //
+        bool complete = false;
         while (!queue.empty())
         {
             //
@@ -52,17 +59,26 @@ namespace mess2_algorithms
             auto index_history_next = static_cast<int64_t>(history.size());
             for (const auto& index_child_curr : adjacency[index_parent_curr])
             {
+                std::cout << "_: " << index_parent_curr << " to " << index_child_curr << std::endl;
                 auto [threat_next, time_next] = get_cost(graph, threat, actor, index_parent_curr, index_child_curr, index_parent_last, constraint, threat_curr, time_curr);
 
                 history.emplace_back(threat_next, time_next, index_child_curr, index_history_curr);
                 queue.emplace(threat_next, time_next, index_child_curr, index_history_next);
-                if (index_child_curr == index_target){ break; }
+                index_history_next = index_history_next + 1;
+
+                if (index_child_curr == index_target)
+                {
+                    complete = true;
+                    break;
+                }
             }
+            if (complete == true){ break; }
         }
 
         // generate path in backwards order
         Path path;
         auto [threat_curr, time_curr, index_parent_curr, index_history_curr] = history.back();
+        auto threat_final = threat_curr;
         while (index_history_curr != -1)
         {
             auto [threat_last, time_last, index_parent_last, index_history_last] = history[index_history_curr];
@@ -80,6 +96,7 @@ namespace mess2_algorithms
         }
 
         std::reverse(path.segments.begin(), path.segments.end());
+        std::cout << "threat final : " << threat_final << std::endl;
         return path;
     }
 

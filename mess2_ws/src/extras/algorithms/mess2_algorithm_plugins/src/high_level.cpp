@@ -87,7 +87,7 @@ namespace mess2_algorithms
                 occupancies[index_actor_curr] = actors[index_parent_curr].retrieve_occupancies_at_vertex(index_child_curr);
 
                 // need to compare occupancies and determine if there is overlap
-                std::vector<int8_t> occupied(graph.vertices.size(), 0);
+                std::vector<int64_t> occupied(graph.vertices.size(), 0);
                 for (const auto& occupancy : occupancies)
                 {
                     for (std::size_t jter = 0; jter < occupancy.occupied.size(); ++jter)

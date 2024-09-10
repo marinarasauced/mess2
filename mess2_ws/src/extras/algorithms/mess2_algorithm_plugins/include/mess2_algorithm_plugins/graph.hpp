@@ -30,9 +30,9 @@ namespace mess2_algorithms
 {
     std::vector<Vertex> generate_vertices(const arma::mat& x_mesh, const arma::mat& y_mesh);
 
-    std::vector<Edge> generate_edges(const arma::mat& x_mesh, const arma::mat& y_mesh);
+    std::vector<Edge> generate_edges(const arma::mat& x_mesh, const arma::mat& y_mesh, const bool& diagonals);
 
-    Graph generate_graph(const arma::mat& x_mesh, const arma::mat& y_mesh);
+    Graph generate_graph(const arma::mat& x_mesh, const arma::mat& y_mesh, const bool& diagonals);
 
     int64_t get_index_vertex_from_position(const std::vector<Vertex>& vertices, const double x, const double y);
 

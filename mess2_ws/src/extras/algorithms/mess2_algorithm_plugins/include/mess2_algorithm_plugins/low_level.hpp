@@ -30,7 +30,6 @@ using Graph = mess2_algorithm_msgs::msg::Graph;
 using Path = mess2_algorithm_msgs::msg::Path;
 using Threat = mess2_algorithm_msgs::msg::ThreatField;
 
-
 namespace mess2_algorithms
 {
     Path execute_low_level_search(const Graph& graph, const Threat& threat, Actor& actor, int64_t& index_source, int64_t& index_target, const std::vector<Constraints>& constraint);
