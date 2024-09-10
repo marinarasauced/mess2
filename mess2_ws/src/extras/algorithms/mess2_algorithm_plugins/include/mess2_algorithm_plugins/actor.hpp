@@ -33,7 +33,7 @@ namespace mess2_algorithms
 class Actor
 {
 public:
-    Actor(const std::string& actor_name, const std::string& actor_dir);
+    Actor(const std::string& actor_name, const std::string& actor_dir, const Graph& graph, const Threat& threat);
 
     std::string get_actor_name() const;
     std::string get_turtlebot3_model() const;
@@ -52,7 +52,9 @@ public:
 
     void fill_occupancies_by_vertex(const Graph& graph);
     Occupancy retrieve_occupancies_at_vertex(const int64_t& index_vertex);
-    double retrieve_occupied_threat_at_vertex(const Threat& threat, const int64_t& index_vertex);
+
+    void fill_threat_by_vertex(const Threat& threat);
+    double retrieve_threat_at_vertex(const int64_t& index_vertex);
 
 private:
     void load_config(const std::string& actor_dir);
@@ -71,6 +73,7 @@ private:
     double x_lin_tol;
     double x_ang_tol;
     std::vector<Occupancy> occupancies_by_vertex;
+    std::vector<double> threat_by_vertex;
 };
 
 } // namespace mess2_algorithms

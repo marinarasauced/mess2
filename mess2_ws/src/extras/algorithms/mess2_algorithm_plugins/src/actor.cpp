@@ -10,10 +10,12 @@ double counter = 0;
 
 namespace mess2_algorithms
 {
-    Actor::Actor(const std::string& actor_name, const std::string& actor_dir) : actor_name(actor_name)
+    Actor::Actor(const std::string& actor_name, const std::string& actor_dir, const Graph& graph, const Threat& threat) : actor_name(actor_name)
     {
         (void) load_config(actor_dir);
         (void) load_specifications(actor_dir);
+        (void) fill_occupancies_by_vertex(graph);
+        (void) fill_threat_by_vertex(threat);
     }
 
     std::string Actor::get_actor_name() const { return actor_name; }
@@ -142,22 +144,34 @@ namespace mess2_algorithms
 
     Occupancy Actor::retrieve_occupancies_at_vertex(const int64_t& index_vertex)
     {
-        auto occupancies = occupancies_by_vertex[index_vertex];
-        return occupancies;
+        auto occupancies_at_vertex = occupancies_by_vertex[index_vertex];
+        return occupancies_at_vertex;
     }
 
-    double Actor::retrieve_occupied_threat_at_vertex(const Threat& threat, const int64_t& index_vertex)
+    void Actor::fill_threat_by_vertex(const Threat& threat)
     {
-        double threat_cummulative = 0.0;
-        auto occupancies = retrieve_occupancies_at_vertex(index_vertex);
+        threat_by_vertex.resize(threat.threat.size());
 
         for (std::vector<double>::size_type iter = 0; iter < threat.threat.size(); ++iter)
         {
-            auto threat_value = threat.threat[iter];
-            auto occupancy_bool = occupancies.occupied[iter];
-            threat_cummulative += threat_value * occupancy_bool;
+            double threat_cummulative = 0.0;
+            auto occupancies = retrieve_occupancies_at_vertex(iter);
+
+            for (std::vector<double>::size_type jter = 0; jter < threat.threat.size(); ++jter)
+            {
+                auto threat_value = threat.threat[jter];
+                auto occupancy_bool = occupancies.occupied[jter];
+                threat_cummulative += threat_value * occupancy_bool;
+            }
+
+            threat_by_vertex[iter] = threat_cummulative;
         }
-        return threat_cummulative;
+    }
+
+    double Actor::retrieve_threat_at_vertex(const int64_t& index_vertex)
+    {
+        auto threat_at_vertex = threat_by_vertex[index_vertex];
+        return threat_at_vertex;
     }
 
 } // namespace mess2_algorithms

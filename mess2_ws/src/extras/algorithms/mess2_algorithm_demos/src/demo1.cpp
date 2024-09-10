@@ -42,8 +42,7 @@ public:
         auto threat = generate_threat(x_weights, y_weights);
 
         // list of actors generation
-        auto burger1 = Actor("burger1", actor_dir_);
-        burger1.fill_occupancies_by_vertex(graph);
+        auto burger1 = Actor("burger1", actor_dir_, graph, threat);
 
         std::vector<Actor> actors;
         actors.push_back(burger1);
@@ -57,16 +56,16 @@ public:
         indices_target.emplace_back(get_index_vertex_from_position(graph.vertices, 3.0, 3.0));
 
         // run algorithm
-        // std::vector<Constraints> constraints;
-        // constraints.resize(9);
-        // auto path = execute_low_level_search(graph, threat, actors[0], indices_source[0], indices_target[0], constraints);
-        execute_high_level_search(graph, threat, actors, indices_source, indices_target);
+        std::vector<Constraints> constraints;
+        constraints.resize(graph.vertices.size());
+        auto path = execute_low_level_search(graph, threat, actors[0], indices_source[0], indices_target[0], constraints);
+        // execute_high_level_search(graph, threat, actors, indices_source, indices_target);
     }
 
 private:
     // hard-coded parameters
     std::string actor_dir_ = "/home/marinarasauced/Projets/mess2/actors/ugv";
-    int64_t resolution_ = 11;
+    int64_t resolution_ = 100;
 };
 
 int main(int argc, char **argv)

@@ -47,8 +47,8 @@ namespace mess2_algorithms
         }
 
         // assume cost equals product of time at vertex and occupied threat at vertex
-        auto threat_at_parent_curr = actor.retrieve_occupied_threat_at_vertex(threat, index_parent_curr);
-        auto threat_at_child_curr = actor.retrieve_occupied_threat_at_vertex(threat, index_child_curr);
+        auto threat_at_parent_curr = actor.retrieve_threat_at_vertex(index_parent_curr);
+        auto threat_at_child_curr = actor.retrieve_threat_at_vertex(index_child_curr);
 
         // cost from threat and time product
         auto cost_to_wait = time_to_wait * threat_at_parent_curr;

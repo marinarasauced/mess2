@@ -84,7 +84,7 @@ namespace mess2_algorithms
                 auto [time_curr, time_next, index_parent_curr, index_child_curr, index_actor_curr] = plansort[iter];
 
                 // update occupancy for current agent at child
-                occupancies[index_actor_curr] = actors[index_parent_curr].retrieve_occupancies_at_vertex(index_child_curr);
+                occupancies[index_actor_curr] = actors[index_actor_curr].retrieve_occupancies_at_vertex(index_child_curr);
 
                 // need to compare occupancies and determine if there is overlap
                 std::vector<int64_t> occupied(graph.vertices.size(), 0);
@@ -147,11 +147,7 @@ namespace mess2_algorithms
             for (std::vector<Segment>::size_type jter = 0; jter < path.segments.size(); ++jter)
             {
                 const auto& segment = path.segments[jter];
-                std::cout << jter << ": "
-                          << segment.stamp[0] << ", "
-                          << segment.stamp[1] << ", "
-                          << segment.segment.index_parent << ", "
-                          << segment.segment.index_child << "\n";
+                std::cout << jter << ": " << segment.segment.index_parent << " to " << segment.segment.index_child << " | [" << segment.stamp[0] << ", " << segment.stamp[1] << "]" << "\n";
             }
         }
 
