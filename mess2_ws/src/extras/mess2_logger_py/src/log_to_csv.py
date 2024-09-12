@@ -66,10 +66,7 @@ def get_msg_map(path_msg, output, struct):
             name_field = parts[1]
             type_field = parts[0]
 
-            is_array = re.match(r"(.+?)\[(\d*)\]", type_field)
-            is_pkg_diff = type_field.__contains__("/")
-            
-
+            is_array = re.match(r"(.+?)\[(\d*)\]", type_field)            
             if is_array:
                 type_base = is_array.group(1)
                 size_array = is_array.group(2)
@@ -77,7 +74,6 @@ def get_msg_map(path_msg, output, struct):
                 type_field = type_base
             
             is_primative = type_field in PRIMATIVE_DATA_TYPES
-
             if is_primative:
                 output.append(f"{struct}.{name_field}")
             else:
@@ -86,13 +82,13 @@ def get_msg_map(path_msg, output, struct):
                     pkg_msg = type_field[0]
                     type_msg = type_field[1]
                     path_msg_ = get_msg_path(pkg_msg, type_msg)
-                    get_msg_map(path_msg_, output, struct)
+                    get_msg_map(path_msg_, output, f"{struct}.{name_field}")
                 else:
                     print(path_msg)
                     pkg_msg = path_msg.split("/")[-3]
                     type_msg = type_field
                     path_msg_ = get_msg_path(pkg_msg, type_msg)
-                    get_msg_map(path_msg_, output, struct)
+                    get_msg_map(path_msg_, output, f"{struct}.{name_field}")
     
     return output
 
@@ -180,7 +176,7 @@ class LogTopicsToCSVs(Node):
         """
         self.get_logger().info(topic.name_topic)
         self.get_logger().info(topic.type_topic)
-        print(topic.map_topic)
+        self.get_logger().info(f"{topic.map_topic}")
 
 
 def main(args=None):
