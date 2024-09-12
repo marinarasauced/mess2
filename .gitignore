@@ -14,6 +14,7 @@ log/
 
 # ignore vscode
 .vscode/
+__pycache__
 
 # ignore matlab
 mess2_matlab/
