@@ -9,8 +9,8 @@ def generate_launch_description():
     return LaunchDescription([
         DeclareLaunchArgument(
             'topics',
-            default_value='[/topic1]',
-            description='List of topics to log to CSV files'
+            default_value='[/topic1, /topic2]',
+            description='list of topics to log to CSV files'
         ),
         Node(
             package='mess2_logger_py',

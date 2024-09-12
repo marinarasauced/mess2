@@ -87,7 +87,6 @@ def get_msg_map(path_msg, output, struct):
                     path_msg_ = get_msg_path(pkg_msg, type_msg)
                     get_msg_map(path_msg_, output, f"{struct}.{name_field}")
                 else:
-                    print(path_msg)
                     pkg_msg = path_msg.split("/")[-3]
                     type_msg = type_field
                     path_msg_ = get_msg_path(pkg_msg, type_msg)
@@ -126,10 +125,10 @@ class LogTopicsToCSVs(Node):
 
         if not path.exists(dir_logs):
             makedirs(dir_logs)
-
-        topic1 = self.Topic(topics[0], dir_logs)
-        self.set_topic_subscription(topic1)
-        self.print_topic_info(topic1)
+        
+        self.loggers = [self.Topic(topics[iter], dir_logs) for iter in range(len(topics))]
+        for logger in self.loggers:
+            self.set_topic_subscription(logger)
 
 
     class Topic():
