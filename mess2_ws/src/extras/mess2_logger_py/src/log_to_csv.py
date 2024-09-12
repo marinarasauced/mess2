@@ -32,8 +32,11 @@ from unique_identifier_msgs.msg import *
 from visualization_msgs.msg import *
 
 from ament_index_python.packages import get_package_share_directory
-from os import path
+import csv
+import datetime
+from os import listdir, makedirs, path, unlink
 import re
+import shutil
 import subprocess
 
 
@@ -113,10 +116,18 @@ class LogTopicsToCSVs(Node):
         """
         super().__init__("log_to_csvs")
 
+        self.declare_parameter("dir_logs", "/home/mess2/mess2/logs/2024_09_12/testing")
+        self.declare_parameter("name_experiment", "demo1")
         self.declare_parameter("topics", [""])
+
+        dir_logs = self.get_parameter("dir_logs").get_parameter_value().string_value
+        name_experiment = self.get_parameter("name_experiment").get_parameter_value().string_value
         topics = self.get_parameter("topics").get_parameter_value().string_array_value
 
-        topic1 = self.Topic(topics[0])
+        if not path.exists(dir_logs):
+            makedirs(dir_logs)
+
+        topic1 = self.Topic(topics[0], dir_logs)
         self.set_topic_subscription(topic1)
         self.print_topic_info(topic1)
 
@@ -125,18 +136,24 @@ class LogTopicsToCSVs(Node):
         """
         
         """
-        def __init__(self, topic):
+        def __init__(self, topic, dir_logs):
             """
             
             """
             self.name_topic = topic
 
+            self.log_topic = None
             self.map_topic = None
             self.type_topic = None
-            self.set_topic_info()
+            self.set_topic_info(dir_logs)
+
+            if not path.exists(self.log_topic):
+                with open(self.log_topic, "w", newline="") as file:
+                    writer = csv.writer(file)
+                    writer.writerow(self.map_topic)
 
         
-        def set_topic_info(self):
+        def set_topic_info(self, dir_logs):
             """
             
             """
@@ -146,16 +163,37 @@ class LogTopicsToCSVs(Node):
             
             self.map_topic = get_topic_map(output[0], output[2])
             self.type_topic = output[2]
-            
 
-            
+            file_topic = self.name_topic[1:].replace("/", "_") + ".csv"
+            self.log_topic = path.join(dir_logs, file_topic)
+            if not path.exists(self.log_topic):
+                makedirs(self.log_topic)
+            for file in listdir(dir_logs):
+                path_file = path.join(dir_logs, file)
+                if path.isfile(path_file) or path.islink(path_file):
+                    unlink(path_file)
+                elif path.isdir(path_file):
+                    shutil.rmtree(path_file)
 
 
         def callback(self, msg):
             """
             
             """
-            pass
+            list = []
+            for map_field in self.map_topic:
+                try:
+                    data_field = str(eval(f"{map_field}"))
+                    if data_field.startswith("()") and data_field.endswith(")"):
+                        field_data = field_data.replace(",", "")
+                    list.append(data_field)
+                except Exception as e:
+                    list.append("")
+            
+            with open(self.log_topic, "a", newline="") as file:
+                writer = csv.writer(file, delimiter="\t")
+                writer.writerow(list)
+            list.clear()
 
 
     def set_topic_subscription(self, topic: Topic):
