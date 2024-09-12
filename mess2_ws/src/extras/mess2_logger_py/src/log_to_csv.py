@@ -31,10 +31,80 @@ from turtlesim.msg import *
 from unique_identifier_msgs.msg import *
 from visualization_msgs.msg import *
 
+from ament_index_python.packages import get_package_share_directory
+from os import path
+import re
 import subprocess
 
 
+PRIMATIVE_DATA_TYPES = {"int8", "uint8", "int16", "uint16", "int32", "uint32", "int64", "uint64", "float32", "float64", "bool", "string", "time", "duration", "byte"}
 
+
+def get_msg_path(pkg_msg, type_msg):
+    """
+    
+    """
+    path_topic = path.join(
+        get_package_share_directory(pkg_msg),
+        "msg",
+        f"{type_msg}.msg"
+    )
+
+    return path_topic
+
+
+def get_msg_map(path_msg, output, struct):
+    """
+    
+    """
+    file_msg = open(path_msg, "r")
+    lines = file_msg.readlines()
+    for line in lines:
+        line = line.strip()
+        if not line.startswith("#") and line:
+            parts = line.split()
+            name_field = parts[1]
+            type_field = parts[0]
+
+            is_array = re.match(r"(.+?)\[(\d*)\]", type_field)
+            is_pkg_diff = type_field.__contains__("/")
+            
+
+            if is_array:
+                type_base = is_array.group(1)
+                size_array = is_array.group(2)
+                size_array = int(size_array) if size_array else "unspecified"
+                type_field = type_base
+            
+            is_primative = type_field in PRIMATIVE_DATA_TYPES
+
+            if is_primative:
+                output.append(f"{struct}.{name_field}")
+            else:
+                if (type_field.__contains__("/")):
+                    type_field = type_field.split("/")
+                    pkg_msg = type_field[0]
+                    type_msg = type_field[1]
+                    path_msg_ = get_msg_path(pkg_msg, type_msg)
+                    get_msg_map(path_msg_, output, struct)
+                else:
+                    print(path_msg)
+                    pkg_msg = path_msg.split("/")[-3]
+                    type_msg = type_field
+                    path_msg_ = get_msg_path(pkg_msg, type_msg)
+                    get_msg_map(path_msg_, output, struct)
+    
+    return output
+
+
+def get_topic_map(pkg_topic, type_topic, struct="msg"):
+    """
+    
+    """
+    path_topic = get_msg_path(pkg_topic, type_topic)
+    map_topic = get_msg_map(path_topic, [], struct)
+
+    return map_topic
 
 
 class LogTopicsToCSVs(Node):
@@ -54,7 +124,7 @@ class LogTopicsToCSVs(Node):
         self.set_topic_subscription(topic1)
         self.print_topic_info(topic1)
 
-    
+
     class Topic():
         """
         
@@ -64,7 +134,8 @@ class LogTopicsToCSVs(Node):
             
             """
             self.name_topic = topic
-            self.path_topic = None
+
+            self.map_topic = None
             self.type_topic = None
             self.set_topic_info()
 
@@ -75,10 +146,13 @@ class LogTopicsToCSVs(Node):
             """
             command = ["ros2", "topic", "type", self.name_topic]
             result = subprocess.run(command, capture_output=True, text=True, check=True)
-            output = result.stdout.strip()
+            output = result.stdout.strip().split("/")
             
-            self.path_topic = output
-            self.type_topic = output.split("/")[-1]
+            self.map_topic = get_topic_map(output[0], output[2])
+            self.type_topic = output[2]
+            
+
+            
 
 
         def callback(self, msg):
@@ -86,7 +160,8 @@ class LogTopicsToCSVs(Node):
             
             """
             pass
-    
+
+
     def set_topic_subscription(self, topic: Topic):
         """
         
@@ -104,8 +179,8 @@ class LogTopicsToCSVs(Node):
         
         """
         self.get_logger().info(topic.name_topic)
-        self.get_logger().info(topic.path_topic)
         self.get_logger().info(topic.type_topic)
+        print(topic.map_topic)
 
 
 def main(args=None):
