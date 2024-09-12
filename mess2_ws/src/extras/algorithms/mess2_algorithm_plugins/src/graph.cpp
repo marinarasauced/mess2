@@ -69,13 +69,27 @@ namespace mess2_algorithms
                         bool match_child_to_2 = (vertex_child.x_ == vertex_2.first && vertex_child.y_ == vertex_2.second);
                         if (match_child_to_2) {
 
-                            //
+                            bool is_same_x = (vertex_child.x_ == vertex_parent.x_);
+                            bool is_same_y = (vertex_child.y_ == vertex_parent.y_);
+                            bool is_same_theta = (vertex_child.theta_ == vertex_parent.theta_);
 
-                            //
-
-                            //
-
-                            //
+                            if (is_same_x && is_same_y && is_same_theta) {
+                                edges.emplace_back(Edge(iter, jter));
+                            } else if (is_same_x && is_same_y && !is_same_theta) {
+                                edges.emplace_back(Edge(iter, jter));
+                            } else if (is_same_theta) {
+                                auto theta_vertices = vertex_parent.theta_;
+                                auto theta_true = (180.0 / M_PI) * std::atan2(
+                                    vertex_parent.y_ - vertex_child.y_,
+                                    vertex_parent.x_ - vertex_child.x_
+                                );
+                                if (theta_true < 0) {
+                                    theta_true += 360;
+                                }
+                                if (theta_true == theta_vertices) {
+                                    edges.emplace_back(Edge(iter, jter));
+                                }
+                            }
                         }
                     }
                 }
