@@ -86,8 +86,8 @@ namespace mess2_algorithms
                             } else if (is_same_theta) {
                                 auto theta_vertices = vertex_parent_theta_;
                                 auto theta_true = (180.0 / M_PI) * std::atan2(
-                                    vertex_parent_y_ - vertex_child_y_,
-                                    vertex_parent_x_ - vertex_child_x_
+                                    vertex_child_y_ - vertex_parent_y_,
+                                    vertex_child_x_ - vertex_parent_x_
                                 );
                                 if (theta_true < 0) {
                                     theta_true += 360;
