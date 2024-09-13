@@ -10,11 +10,14 @@ namespace mess2_algorithms
     public:
         Vertex(const double& x, const double&y, const double& theta);
 
+        double get_x_() const;
+        double get_y_() const;
+        double get_theta_() const;
+
+    private:
         double x_;
         double y_;
         double theta_;
-    private:
-        
     };
 
 } // namespace mess2_algorithms

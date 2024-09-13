@@ -57,31 +57,37 @@ namespace mess2_algorithms
             }
         }
 
-        for (const auto pair : pairs) {
+        for (const auto& pair : pairs) {
             const auto vertex_1 = pair.first;
             const auto vertex_2 = pair.second;
-            for (int64_t iter = 0; iter < vertices.size(); ++iter) {
+            for (int64_t iter = 0; iter < static_cast<int64_t>(vertices.size()); ++iter) {
                 const auto vertex_parent = vertices[iter];
-                bool match_parent_to_1 = (vertex_parent.x_ == vertex_1.first && vertex_parent.y_ == vertex_1.second);
+                auto vertex_parent_x_ = vertex_parent.get_x_();
+                auto vertex_parent_y_ = vertex_parent.get_y_();
+                auto vertex_parent_theta_ = vertex_parent.get_theta_();
+                bool match_parent_to_1 = (vertex_parent_x_ == vertex_1.first && vertex_parent_y_ == vertex_1.second);
                 if (match_parent_to_1) {
-                    for (int64_t jter = 0; jter < vertices.size(); ++jter) {
+                    for (int64_t jter = 0; jter < static_cast<int64_t>(vertices.size()); ++jter) {
                         const auto vertex_child = vertices[jter];
-                        bool match_child_to_2 = (vertex_child.x_ == vertex_2.first && vertex_child.y_ == vertex_2.second);
+                        auto vertex_child_x_ = vertex_child.get_x_();
+                        auto vertex_child_y_ = vertex_child.get_y_();
+                        auto vertex_child_theta_ = vertex_child.get_theta_();
+                        bool match_child_to_2 = (vertex_child_x_ == vertex_2.first && vertex_child_y_ == vertex_2.second);
                         if (match_child_to_2) {
 
-                            bool is_same_x = (vertex_child.x_ == vertex_parent.x_);
-                            bool is_same_y = (vertex_child.y_ == vertex_parent.y_);
-                            bool is_same_theta = (vertex_child.theta_ == vertex_parent.theta_);
+                            bool is_same_x = (vertex_child_x_ == vertex_parent_x_);
+                            bool is_same_y = (vertex_child_y_ == vertex_parent_y_);
+                            bool is_same_theta = (vertex_child_theta_ == vertex_parent_theta_);
 
                             if (is_same_x && is_same_y && is_same_theta) {
                                 edges.emplace_back(Edge(iter, jter));
                             } else if (is_same_x && is_same_y && !is_same_theta) {
                                 edges.emplace_back(Edge(iter, jter));
                             } else if (is_same_theta) {
-                                auto theta_vertices = vertex_parent.theta_;
+                                auto theta_vertices = vertex_parent_theta_;
                                 auto theta_true = (180.0 / M_PI) * std::atan2(
-                                    vertex_parent.y_ - vertex_child.y_,
-                                    vertex_parent.x_ - vertex_child.x_
+                                    vertex_parent_y_ - vertex_child_y_,
+                                    vertex_parent_x_ - vertex_child_x_
                                 );
                                 if (theta_true < 0) {
                                     theta_true += 360;
@@ -96,89 +102,46 @@ namespace mess2_algorithms
             }
         }
 
-
-
-
-        // 
-
-        // auto calculate_theta = [](double x1, double y1, double x2, double y2) {
-        //     return std::atan2(y2 - y1, x2 - x1) * 180 / M_PI;
-        // };
-
-        // int64_t n_rows = x_mesh.n_rows;
-        // int64_t n_cols = y_mesh.n_cols;
-        // int64_t n_elem = vertices.size();
-        // for (int64_t iter = 0; iter < n_rows; ++iter) {
-        //     for (int64_t jter = 0; jter < n_cols; ++jter) {
-        //         auto x_sw = x_mesh(iter + 0, jter + 0);
-        //         auto y_sw = y_mesh(iter + 0, jter + 0);
-        //         auto x_se = x_mesh(iter + 1, jter + 0);
-        //         auto y_se = y_mesh(iter + 1, jter + 0);
-        //         auto x_ne = x_mesh(iter + 1, jter + 1);
-        //         auto y_ne = y_mesh(iter + 1, jter + 1);
-        //         auto x_nw = x_mesh(iter + 0, jter + 1);
-        //         auto y_nw = y_mesh(iter + 0, jter + 1);
-
-        //         for (int64_t kter1 = 0; kter1 < vertices.size(); ++kter1) {
-        //             auto vertex_parent = vertices[kter1];
-        //             bool parent_is_sw = (vertex_parent.x_ == x_sw && vertex_parent.y_ == y_sw);
-        //             bool parent_is_se = (vertex_parent.x_ == x_se && vertex_parent.y_ == y_se);
-        //             bool parent_is_ne = (vertex_parent.x_ == x_ne && vertex_parent.y_ == y_sw);
-        //             bool parent_is_nw = (vertex_parent.x_ == x_nw && vertex_parent.y_ == y_sw);
-                    
-        //             for (int64_t kter2 = 0; kter2 < vertices.size(); ++kter2) {
-        //                 auto vertex_child = vertices[kter2];
-
-                        
-
-        //                 bool same_x = (vertex_child.x_ == vertex_parent.x_);
-        //                 bool same_y = (vertex_child.y_ == vertex_parent.y_);
-        //                 bool same_theta = (vertex_child.theta_ == vertex_parent.theta_);
-
-        //                 // if position and heading are same, add edge for waiting at vertex
-        //                 if (same_x && same_y && same_theta) {
-        //                     edges.emplace_back(Edge(kter1, kter2));
-        //                 }
-
-        //                 // if position is same but heading is different, add edge for rotating at vertex
-        //                 if (same_x && same_y && !same_theta) {
-        //                     edges.emplace_back(Edge(kter1, kter2));
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
-
-
-
-
-
-
-        // for (int64_t iter = 0; iter < 8; ++iter) {
-        //     for (int64_t jter = 0; jter < n_rows; ++jter) {
-        //         for (int64_t kter = 0; kter < n_cols; ++kter) {
-                    
-                    
-        //             auto vertex = vertices[kter];
-        //             if (x_parent == vertex.x_ && y_parent == vertex.y_) {
-        //                 if (jter < n_cols - 1) {
-
-        //                 }
-        //             }
-        //         }
-
-
-        //         int64_t index_parent = iter * n_cols + jter;
-        //         if (jter < n_cols - 1) {
-        //             int64_t index_child = iter * n_cols + (jter + 1);
-        //             edges.emplace_back(Edge(index_parent, index_child));
-        //         }
-        //         if (iter < n_rows - 1) {
-        //             int64_t index_child = (iter + 1) * n_cols + jter;
-        //             edges.emplace_back(Edge(index_parent, index_child));
-        //         }
-        //     }
-        // }
+        return edges;
     }
+
+    Graph::Graph() {}
+
+    void Graph::fill_graph(const arma::mat& x_mesh, const arma::mat& y_mesh)
+    {
+        vertices_ = generate_vertices(x_mesh, y_mesh);
+        edges_ = generate_edges(x_mesh, y_mesh, vertices_);
+    }
+
+    std::vector<Vertex> Graph::get_vertices_() {
+        return vertices_;
+    }
+
+    std::vector<Edge> Graph::get_edges_() {
+        return edges_;
+    }
+
+    void Graph::print_vertices() const {
+        std::cout << "new row:" << std::endl;
+        for (int64_t iter = 0; iter < static_cast<int64_t>(vertices_.size()); ++iter) {
+            const auto& vertex = vertices_[iter];
+            std::cout << iter << ": " << vertex.get_x_() << ", " << vertex.get_y_() << ", " << vertex.get_theta_() << std::endl;
+        }
+    }
+
+    void Graph::print_edges() const {
+        for (int64_t iter = 0; iter < static_cast<int64_t>(edges_.size()); ++iter) {
+            const auto& edge = edges_[iter];
+            std::cout << iter << ": " << edge.get_index_parent_() << " to " << edge.get_index_child_() << std::endl;
+        }
+    }
+
+    Graph generate_graph(const arma::mat& x_mesh, const arma::mat& y_mesh)
+    {
+        auto graph = Graph();
+        graph.fill_graph(x_mesh, y_mesh);
+        return graph;
+    }
+    
 
 } // namespace mess2_algorithms

@@ -9,6 +9,10 @@ namespace mess2_algorithms
     {
     public:
         Edge(const int64_t& index_parent, const int64_t& index_child);
+
+        int64_t get_index_parent_() const;
+        int64_t get_index_child_() const;
+
     private:
         int64_t index_parent_;
         int64_t index_child_;

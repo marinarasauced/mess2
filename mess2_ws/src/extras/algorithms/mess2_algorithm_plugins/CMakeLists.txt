@@ -6,56 +6,65 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 find_package(ament_cmake REQUIRED)
-find_package(mess2_algorithm_msgs REQUIRED)
 find_package(yaml-cpp REQUIRED)
 
 include_directories(include)
 
-add_library(_actor SHARED src/actor.cpp)
-add_library(_cost SHARED src/cost.cpp)
+add_library(_edge SHARED src/edge.cpp)
 add_library(_graph SHARED src/graph.cpp)
-add_library(_high_level SHARED src/high_level.cpp)
-add_library(_low_level SHARED src/low_level.cpp)
-add_library(_threat SHARED src/threat.cpp)
 add_library(_utils SHARED src/utils.cpp)
+add_library(_vertex SHARED src/vertex.cpp)
 
-ament_target_dependencies(
-  _actor
-  "mess2_algorithm_msgs"
-  "yaml-cpp"
-)
 
-ament_target_dependencies(
-  _cost
-  "mess2_algorithm_msgs"
-)
 
-ament_target_dependencies(
-  _graph
-  "mess2_algorithm_msgs"
-)
+# add_library(_actor SHARED src/actor.cpp)
+# add_library(_cost SHARED src/cost.cpp)
+# add_library(_graph SHARED src/graph.cpp)
+# add_library(_high_level SHARED src/high_level.cpp)
+# add_library(_low_level SHARED src/low_level.cpp)
+# add_library(_threat SHARED src/threat.cpp)
+# add_library(_utils SHARED src/utils.cpp)
 
-ament_target_dependencies(
-  _high_level
-  "mess2_algorithm_msgs"
-)
+# ament_target_dependencies(
+#   _actor
+#   "mess2_algorithm_msgs"
+#   "yaml-cpp"
+# )
 
-ament_target_dependencies(
-  _low_level
-  "mess2_algorithm_msgs"
-)
+# ament_target_dependencies(
+#   _cost
+#   "mess2_algorithm_msgs"
+# )
 
-ament_target_dependencies(
-  _threat
-  "mess2_algorithm_msgs"
-)
+# ament_target_dependencies(
+#   _graph
+#   "mess2_algorithm_msgs"
+# )
 
-target_link_libraries(_actor yaml-cpp)
-target_link_libraries(_low_level _cost)
+# ament_target_dependencies(
+#   _high_level
+#   "mess2_algorithm_msgs"
+# )
+
+# ament_target_dependencies(
+#   _low_level
+#   "mess2_algorithm_msgs"
+# )
+
+# ament_target_dependencies(
+#   _threat
+#   "mess2_algorithm_msgs"
+# )
+
+# target_link_libraries(_actor yaml-cpp)
+# target_link_libraries(_low_level _cost)
 # target_link_libraries(_high_level _low_level)
 
+target_link_libraries(_graph _edge)
+target_link_libraries(_graph _vertex)
+
 install(
-  TARGETS _actor _cost _graph _high_level _low_level _threat _utils
+  TARGETS _edge _graph _utils _vertex
   EXPORT export_mess2_algorithm_plugins
   LIBRARY DESTINATION lib
 )

@@ -10,8 +10,6 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
   <exec_depend>yaml-cpp</exec_depend>
 
-  <depend>mess2_algorithm_msgs</depend>
-
   <export>
     <build_type>ament_cmake</build_type>
   </export>

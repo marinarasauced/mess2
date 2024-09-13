@@ -10,4 +10,12 @@ namespace mess2_algorithms
         index_child_ = index_child;
     }
 
+    int64_t Edge::get_index_parent_() const {
+        return index_parent_;
+    }
+
+    int64_t Edge::get_index_child_() const {
+        return index_child_;
+    }
+
 } // namespace mess2_algorithms

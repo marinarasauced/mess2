@@ -7,22 +7,20 @@ endif()
 
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(mess2_algorithm_msgs REQUIRED)
 find_package(mess2_algorithm_plugins REQUIRED)
 
-add_executable(demo1 src/demo1.cpp)
+add_executable(demo_graph src/demo_graph.cpp)
 
 include_directories(${mess2_algorithm_plugins_INCLUDE_DIRS})
 
 ament_target_dependencies(
-  demo1
+  demo_graph
   "rclcpp"
-  "mess2_algorithm_msgs"
   "mess2_algorithm_plugins"
 )
 
 install(
-  TARGETS demo1
+  TARGETS demo_graph
   DESTINATION lib/${PROJECT_NAME}
 )
 
