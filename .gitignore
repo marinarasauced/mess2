@@ -10,7 +10,7 @@ mess2_ws/src/drivers/mess2_flir_driver/spinnaker_camera_driver/config/_cameras.y
 
 
 #
-log/
+logs/
 
 # ignore vscode
 .vscode/

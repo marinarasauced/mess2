@@ -115,18 +115,21 @@ class LogTopicsToCSVs(Node):
         """
         super().__init__("log_to_csvs")
 
+        self.declare_parameter("dir_sub", "flir")
         self.declare_parameter("dir_logs", "/home/mess2/mess2/logs/2024_09_12/testing")
-        self.declare_parameter("name_experiment", "demo1")
+        self.declare_parameter("name_actor", "flir1")
         self.declare_parameter("topics", [""])
 
+        dir_sub = self.get_parameter("dir_sub").get_parameter_value().string_value
         dir_logs = self.get_parameter("dir_logs").get_parameter_value().string_value
-        name_experiment = self.get_parameter("name_experiment").get_parameter_value().string_value
+        name_actor = self.get_parameter("name_actor").get_parameter_value().string_value
         topics = self.get_parameter("topics").get_parameter_value().string_array_value
 
-        if not path.exists(dir_logs):
-            makedirs(dir_logs)
+        dir_ = path.join(dir_logs, dir_sub, name_actor)
+        if not path.exists(dir_):
+            makedirs(dir_)
         
-        self.loggers = [self.Topic(topics[iter], dir_logs) for iter in range(len(topics))]
+        self.loggers = [self.Topic(topics[iter], dir_) for iter in range(len(topics))]
         for logger in self.loggers:
             self.set_topic_subscription(logger)
 
@@ -147,8 +150,8 @@ class LogTopicsToCSVs(Node):
             self.set_topic_info(dir_logs)
 
             if not path.exists(self.log_topic):
-                with open(self.log_topic, "w", newline="") as file:
-                    writer = csv.writer(file)
+                with open(self.log_topic, "a", newline="") as file:
+                    writer = csv.writer(file, delimiter="\t")
                     writer.writerow(self.map_topic)
 
         
