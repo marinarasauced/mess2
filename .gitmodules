@@ -1,0 +1,6 @@
+[submodule "mess2_ws/src/logger/mess2_logger_py"]
+	path = mess2_ws/src/logger/mess2_logger_py
+	url = https://github.com/marinarasauced/mess2_logger_py.git
+[submodule "mess2_ws/src/logger/mess2_logger_cpp"]
+	path = mess2_ws/src/logger/mess2_logger_cpp
+	url = https://github.com/marinarasauced/mess2_logger_cpp.git
