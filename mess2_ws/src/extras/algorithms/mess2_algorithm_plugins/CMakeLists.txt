@@ -10,10 +10,25 @@ find_package(yaml-cpp REQUIRED)
 
 include_directories(include)
 
-add_library(_edge SHARED src/edge.cpp)
-add_library(_graph SHARED src/graph.cpp)
-add_library(_utils SHARED src/utils.cpp)
-add_library(_vertex SHARED src/vertex.cpp)
+add_library(_graph SHARED src/graph/_graph.cpp)
+add_library(graph_adjacency SHARED src/graph/adjacency.cpp)
+add_library(graph_edge SHARED src/graph/edge.cpp)
+add_library(graph_vertex SHARED src/graph/vertex.cpp)
+
+target_link_libraries(_graph graph_adjacency)
+target_link_libraries(_graph graph_edge)
+target_link_libraries(_graph graph_vertex)
+
+
+
+
+
+# add_library(__low_level SHARED src/_low_level.cpp)
+
+# add_library(_edge SHARED src/edge.cpp)
+# add_library(_graph SHARED src/graph.cpp)
+# add_library(_utils SHARED src/utils.cpp)
+# add_library(_vertex SHARED src/vertex.cpp)
 
 
 
@@ -60,11 +75,8 @@ add_library(_vertex SHARED src/vertex.cpp)
 # target_link_libraries(_low_level _cost)
 # target_link_libraries(_high_level _low_level)
 
-target_link_libraries(_graph _edge)
-target_link_libraries(_graph _vertex)
-
 install(
-  TARGETS _edge _graph _utils _vertex
+  TARGETS _graph graph_adjacency graph_edge graph_vertex
   EXPORT export_mess2_algorithm_plugins
   LIBRARY DESTINATION lib
 )

@@ -1,6 +1,6 @@
 
 #include "mess2_algorithm_plugins/common.hpp"
-#include "mess2_algorithm_plugins/vertex.hpp"
+#include "mess2_algorithm_plugins/graph/vertex.hpp"
 
 namespace mess2_algorithms
 {

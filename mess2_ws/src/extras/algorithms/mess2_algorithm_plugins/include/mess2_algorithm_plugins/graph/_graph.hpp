@@ -2,8 +2,8 @@
 #define MESS2_ALGORITHM_PLUGINS_GRAPH_HPP
 
 #include "mess2_algorithm_plugins/common.hpp"
-#include "mess2_algorithm_plugins/vertex.hpp"
-#include "mess2_algorithm_plugins/edge.hpp"
+#include "mess2_algorithm_plugins/graph/vertex.hpp"
+#include "mess2_algorithm_plugins/graph/edge.hpp"
 #include </usr/include/armadillo>
 
 namespace mess2_algorithms
