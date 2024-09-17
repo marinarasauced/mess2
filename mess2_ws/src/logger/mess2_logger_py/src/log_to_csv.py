@@ -118,7 +118,7 @@ class LogTopicsToCSVs(Node):
         self.declare_parameter("dir_sub", "flir")
         self.declare_parameter("dir_logs", "/home/mess2/mess2/logs/2024_09_12/testing")
         self.declare_parameter("name_actor", "flir1")
-        self.declare_parameter("topics", [""])
+        self.declare_parameter("topics", ["/test1"])
 
         dir_sub = self.get_parameter("dir_sub").get_parameter_value().string_value
         dir_logs = self.get_parameter("dir_logs").get_parameter_value().string_value
