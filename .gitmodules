@@ -7,3 +7,9 @@
 [submodule "mess2_ws/src/drivers/vicon/mess2_vicon_driver"]
 	path = mess2_ws/src/drivers/vicon/mess2_vicon_driver
 	url = https://github.com/marinarasauced/mess2_vicon_driver.git
+[submodule "mess2_ws/src/logger/mess2_logger_cpp"]
+	path = mess2_ws/src/logger/mess2_logger_cpp
+	url = https://github.com/marinarasauced/mess2_logger_cpp.git
+[submodule "mess2_ws/src/logger/mess2_logger_py"]
+	path = mess2_ws/src/logger/mess2_logger_py
+	url = https://github.com/marinarasauced/mess2_logger_py.git
