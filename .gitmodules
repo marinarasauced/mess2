@@ -16,3 +16,9 @@
 [submodule "mess2_ws/src/algorithms/mess2_algorithm_plugins"]
 	path = mess2_ws/src/algorithms/mess2_algorithm_plugins
 	url = https://github.com/marinarasauced/mess2_algorithm_plugins
+[submodule "mess2_ws/src/algorithms/mess2_algorithm_threat_static"]
+	path = mess2_ws/src/algorithms/mess2_algorithm_threat_static
+	url = https://github.com/marinarasauced/mess2_algorithm_threat_static.git
+[submodule "mess2_ws/src/algorithms/mess2_algorithm_demos"]
+	path = mess2_ws/src/algorithms/mess2_algorithm_demos
+	url = https://github.com/marinarasauced/mess2_algorithm_demos.git
