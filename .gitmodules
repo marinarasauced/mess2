@@ -22,3 +22,12 @@
 [submodule "mess2_ws/src/algorithms/mess2_algorithm_demos"]
 	path = mess2_ws/src/algorithms/mess2_algorithm_demos
 	url = https://github.com/marinarasauced/mess2_algorithm_demos.git
+[submodule "mess2_ws/src/mess2_msgs"]
+	path = mess2_ws/src/mess2_msgs
+	url = https://github.com/marinarasauced/mess2_msgs.git
+[submodule "mess2_ws/src/mess2_plugins"]
+	path = mess2_ws/src/mess2_plugins
+	url = https://github.com/marinarasauced/mess2_plugins.git
+[submodule "mess2_ws/src/uav"]
+	path = mess2_ws/src/uav
+	url = https://github.com/marinarasauced/mess2_uav.git
