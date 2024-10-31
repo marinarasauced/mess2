@@ -41,7 +41,7 @@ classdef actorTurtleBot3
             end
             
             % Store goals (assuming columns are [x, y, theta])
-            obj.goals = data; % Store the entire matrix as goals
+            obj.goals = [data(:, 1:2), data(:, 4)]; % Store the entire matrix as goals
         end
 
         function obj = simulateToGoals(obj, dt)
@@ -50,7 +50,7 @@ classdef actorTurtleBot3
              obj.times(end + 1, 1) = 0.0;
 
              % Iterate through goals
-             for iter = 2:length(obj.goals)
+             for iter = 2:size(obj.goals, 1)
                 init = obj.goals(iter - 1, :);
                 init(1, 3) = wrapToPi(init(1, 3));
                 trgt = obj.goals(iter, :);
