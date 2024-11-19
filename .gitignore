@@ -1,4 +1,5 @@
 .vscode/
-mess2_ws/build
-mess2_ws/log
-mess2_ws/install
+__pycache__/
+build/
+log/
+install/
