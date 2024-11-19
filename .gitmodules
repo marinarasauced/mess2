@@ -4,3 +4,6 @@
 [submodule "ros2/src/drivers/vicon"]
 	path = ros2/src/drivers/vicon
 	url = https://github.com/marinarasauced/mess2_vicon_driver
+[submodule "ros2/src/logger/logger_py"]
+	path = ros2/src/logger/logger_py
+	url = https://github.com/marinarasauced/mess2_logger_py
