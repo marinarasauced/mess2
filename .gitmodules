@@ -1,0 +1,6 @@
+[submodule "app"]
+	path = app
+	url = https://github.com/marinarasauced/mess2_app
+[submodule "ros2/src/drivers/vicon"]
+	path = ros2/src/drivers/vicon
+	url = https://github.com/marinarasauced/mess2_vicon_driver
