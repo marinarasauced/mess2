@@ -10,3 +10,6 @@
 [submodule "ros2/src/drivers/flir"]
 	path = ros2/src/drivers/flir
 	url = https://github.com/marinarasauced/mess2_flir_driver
+[submodule "ros2/src/logger/logger_cpp"]
+	path = ros2/src/logger/logger_cpp
+	url = https://github.com/marinarasauced/mess2_logger_cpp
