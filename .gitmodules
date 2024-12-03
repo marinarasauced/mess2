@@ -13,3 +13,12 @@
 [submodule "ros2/src/logger/logger_cpp"]
 	path = ros2/src/logger/logger_cpp
 	url = https://github.com/marinarasauced/mess2_logger_cpp
+[submodule "ros2/src/plugins"]
+	path = ros2/src/plugins
+	url = https://github.com/marinarasauced/mess2_plugins
+[submodule "ros2/src/interfaces"]
+	path = ros2/src/interfaces
+	url = https://github.com/marinarasauced/mess2_msgs
+[submodule "ros2/src/ugv/line_following"]
+	path = ros2/src/ugv/line_following
+	url = https://github.com/marinarasauced/ros2_differential_drive_line_following
