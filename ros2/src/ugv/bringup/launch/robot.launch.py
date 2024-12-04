@@ -36,7 +36,7 @@ def generate_launch_description():
     tb3_param_dir = LaunchConfiguration(
         'tb3_param_dir',
         default=os.path.join(
-            get_package_share_directory('turtlebot3_bringup'),
+            get_package_share_directory('turtlebot3_driver'),
             'param',
             TURTLEBOT3_MODEL + '.yaml'))
 
@@ -90,7 +90,7 @@ def generate_launch_description():
         # Include lidar launch file with namespace
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource([lidar_pkg_dir, LDS_LAUNCH_FILE]),
-            launch_arguments={'port': '/dev/ttyUSB0', 'frame_id': 'base_scan', 'name': name}.items(),
+            launch_arguments={'port': '/dev/ttyUSB0', 'frame_id': f'{LaunchConfiguration(name)}_base_scan'}.items(),
         ),
 
         # Launch the TurtleBot3 node with namespace
