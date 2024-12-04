@@ -14,4 +14,9 @@ install(
   DESTINATION share/${PROJECT_NAME}/launch
 )
 
+install(
+  DIRECTORY param/
+  DESTINATION share/${PROJECT_NAME}/param
+)
+
 ament_package()
