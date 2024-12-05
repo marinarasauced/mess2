@@ -22,3 +22,6 @@
 [submodule "ros2/src/ugv/line_following"]
 	path = ros2/src/ugv/line_following
 	url = https://github.com/marinarasauced/ros2_differential_drive_line_following
+[submodule "ros2/src/drivers/vicon_calibration"]
+	path = ros2/src/drivers/vicon_calibration
+	url = https://github.com/marinarasauced/mess2_vicon_calibration
